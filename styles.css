@@ -400,6 +400,17 @@ main {
   padding: 20px;
 }
 
+.cart-summary .primary,
+.cart-summary .ghost {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+.cart-summary .ghost {
+  margin-top: 10px;
+}
+
 .cart-item {
   display: grid;
   grid-template-columns: 84px 1fr auto auto;

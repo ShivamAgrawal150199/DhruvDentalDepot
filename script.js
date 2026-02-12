@@ -290,9 +290,8 @@
 }));
 
 const CART_KEY = "ddd_cart";
-const ORDERS_KEY = "ddd_orders";
-const USERS_KEY = "ddd_users";
-const SESSION_KEY = "ddd_session";
+const SESSION_KEY = "ddd_session_profile";
+const API_BASE = "http://localhost:4000";
 
 const productMap = new Map(inventory.map((item) => [item.id, item]));
 
@@ -310,6 +309,33 @@ function safeJsonParse(value, fallback) {
   }
 }
 
+async function apiRequest(path, options = {}) {
+  const response = await fetch(`${API_BASE}${path}`, {
+    method: options.method || "GET",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      ...(options.headers || {})
+    },
+    body: options.body ? JSON.stringify(options.body) : undefined
+  });
+
+  let payload = {};
+  try {
+    payload = await response.json();
+  } catch {
+    payload = {};
+  }
+
+  if (!response.ok) {
+    const error = new Error(payload.error || "Request failed");
+    error.status = response.status;
+    throw error;
+  }
+
+  return payload;
+}
+
 function getSession() {
   return safeJsonParse(localStorage.getItem(SESSION_KEY), null);
 }
@@ -322,12 +348,22 @@ function clearSession() {
   localStorage.removeItem(SESSION_KEY);
 }
 
-function getUsers() {
-  return safeJsonParse(localStorage.getItem(USERS_KEY), []);
-}
-
-function saveUsers(users) {
-  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+async function refreshSessionFromServer() {
+  try {
+    const data = await apiRequest("/auth/me");
+    if (data?.user) {
+      saveSession(data.user);
+      return data.user;
+    }
+    clearSession();
+    return null;
+  } catch (error) {
+    if (error.status === 401) {
+      clearSession();
+      return null;
+    }
+    return getSession();
+  }
 }
 
 function getCart() {
@@ -575,16 +611,12 @@ function renderCheckoutSummary() {
     .join("");
 }
 
-function saveOrder(order) {
-  const orders = safeJsonParse(localStorage.getItem(ORDERS_KEY), []);
-  orders.push(order);
-  localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
-}
-
-function requireAuthForCheckout() {
+async function requireAuthForCheckout() {
   const needsAuth = document.body?.dataset?.requiresAuth === "true";
   if (!needsAuth) return true;
   if (getSession()) return true;
+  const user = await refreshSessionFromServer();
+  if (user) return true;
   window.location.href = "login.html?next=checkout.html";
   return false;
 }
@@ -594,7 +626,7 @@ function handleCheckoutSubmit() {
   const status = document.getElementById("checkoutStatus");
   if (!form) return;
 
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const detailed = getCartDetailed();
@@ -603,21 +635,14 @@ function handleCheckoutSubmit() {
       return;
     }
 
-    const currentUser = getSession();
+    const currentUser = (await refreshSessionFromServer()) || getSession();
     if (!currentUser) {
       window.location.href = "login.html?next=checkout.html";
       return;
     }
 
     const formData = new FormData(form);
-    const orderId = `DDD-${Date.now()}`;
-    const order = {
-      id: orderId,
-      createdAt: new Date().toISOString(),
-      user: {
-        email: currentUser.email,
-        name: currentUser.name
-      },
+    const payload = {
       customer: {
         name: formData.get("name"),
         phone: formData.get("phone"),
@@ -636,18 +661,29 @@ function handleCheckoutSubmit() {
       }))
     };
 
-    saveOrder(order);
-    saveCart([]);
-    form.reset();
-    renderCheckoutSummary();
+    try {
+      const data = await apiRequest("/orders", {
+        method: "POST",
+        body: payload
+      });
 
-    if (status) {
-      status.textContent = `Order placed successfully. Your order ID is ${orderId}.`;
+      const orderId = data?.order?.id || "N/A";
+      saveCart([]);
+      form.reset();
+      renderCheckoutSummary();
+
+      if (status) {
+        status.textContent = `Order placed successfully. Your order ID is ${orderId}.`;
+      }
+    } catch (error) {
+      if (status) {
+        status.textContent = error.message || "Could not place order. Please try again.";
+      }
     }
   });
 }
 
-function setupAuthPage() {
+async function setupAuthPage() {
   const form = document.getElementById("authForm");
   const status = document.getElementById("authStatus");
   if (!form) return;
@@ -655,15 +691,19 @@ function setupAuthPage() {
   const params = new URLSearchParams(window.location.search);
   const next = params.get("next") || "checkout.html";
 
-  if (getSession()) {
+  const existing = (await refreshSessionFromServer()) || getSession();
+  if (existing) {
     window.location.href = next;
     return;
   }
 
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const formData = new FormData(form);
-    const action = formData.get("action");
+    const submitter = event.submitter;
+    const action =
+      (submitter instanceof HTMLButtonElement && submitter.value) ||
+      String(formData.get("action") || "login");
     const name = String(formData.get("name") || "").trim();
     const email = String(formData.get("email") || "").trim().toLowerCase();
     const password = String(formData.get("password") || "");
@@ -673,31 +713,31 @@ function setupAuthPage() {
       return;
     }
 
-    const users = getUsers();
+    try {
+      let data;
+      if (action === "register") {
+        if (!name) {
+          if (status) status.textContent = "Name is required for registration.";
+          return;
+        }
+        data = await apiRequest("/auth/register", {
+          method: "POST",
+          body: { name, email, password }
+        });
+      } else {
+        data = await apiRequest("/auth/login", {
+          method: "POST",
+          body: { email, password }
+        });
+      }
 
-    if (action === "register") {
-      if (!name) {
-        if (status) status.textContent = "Name is required for registration.";
-        return;
+      if (data?.user) {
+        saveSession(data.user);
       }
-      if (users.some((user) => user.email === email)) {
-        if (status) status.textContent = "Email already exists. Please login.";
-        return;
-      }
-      users.push({ name, email, password });
-      saveUsers(users);
-      saveSession({ name, email });
       window.location.href = next;
-      return;
+    } catch (error) {
+      if (status) status.textContent = error.message || "Authentication failed.";
     }
-
-    const user = users.find((entry) => entry.email === email && entry.password === password);
-    if (!user) {
-      if (status) status.textContent = "Invalid login credentials.";
-      return;
-    }
-    saveSession({ name: user.name, email: user.email });
-    window.location.href = next;
   });
 }
 
@@ -739,10 +779,15 @@ function setupCartInteractions() {
     });
   }
 
-  document.addEventListener("click", (event) => {
+  document.addEventListener("click", async (event) => {
     const target = event.target;
     if (!(target instanceof HTMLElement)) return;
     if (!target.closest("[data-logout-btn]")) return;
+    try {
+      await apiRequest("/auth/logout", { method: "POST" });
+    } catch {
+      // Ignore and clear local session anyway.
+    }
     clearSession();
     renderAuthNav();
     renderCartPage();
@@ -752,19 +797,30 @@ function setupCartInteractions() {
   });
 }
 
-if (pageCategory !== "All" && filters) {
-  filters.style.display = "none";
-}
+async function bootstrap() {
+  if (pageCategory !== "All" && filters) {
+    filters.style.display = "none";
+  }
 
-if (requireAuthForCheckout()) {
+  const canLoad = await requireAuthForCheckout();
+  if (!canLoad) return;
+
   renderFilters();
   renderCards(pageCategory);
   renderCartPage();
   renderCheckoutSummary();
   setupCartInteractions();
   handleCheckoutSubmit();
-  setupAuthPage();
+  await setupAuthPage();
   updateCartBadge();
   renderAuthNav();
   setupMobileNavMenu();
+
+  const user = await refreshSessionFromServer();
+  if (user) {
+    renderAuthNav();
+    renderCartPage();
+  }
 }
+
+bootstrap();
