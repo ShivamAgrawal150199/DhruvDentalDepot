@@ -322,7 +322,7 @@
 
 const CART_KEY = "ddd_cart";
 const SESSION_KEY = "ddd_session_profile";
-const API_BASE = "http://localhost:4000";
+const API_BASE = window.APP_CONFIG?.API_BASE || "http://localhost:4000";
 
 const productMap = new Map(inventory.map((item) => [item.id, item]));
 
