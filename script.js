@@ -292,7 +292,7 @@
     note: ""
   },
   {
-    title: "Scaler Part 03",
+    title: "Scaler solenoid valve",
     category: "Dental Scaler Parts",
     image: "images/scalerparts3.png",
     note: ""
@@ -301,6 +301,18 @@
     title: "Scaler Part 04",
     category: "Dental Scaler Parts",
     image: "images/scalarparts4.jpeg",
+    note: ""
+  },
+  {
+    title: "Scaler tip opener",
+    category: "Dental Scaler Parts",
+    image: "images/scalertipopener.jpg",
+    note: ""
+  },
+  {
+    title: "Scaler cord",
+    category: "Dental Scaler Parts",
+    image: "images/Scalaercord.png",
     note: ""
   }
 ].map((item, index) => ({
