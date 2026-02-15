@@ -377,6 +377,21 @@ main {
   line-height: 1.7;
 }
 
+.whatsapp-btn {
+  display: inline-block;
+  margin-top: 14px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: #1fa855;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.whatsapp-btn:hover {
+  background: #178646;
+}
+
 .cart-layout,
 .checkout-layout {
   display: grid;

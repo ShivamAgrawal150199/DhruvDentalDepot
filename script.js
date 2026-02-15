@@ -183,6 +183,25 @@
     note: ""
   },
   {
+    title: "Air Scalar",
+    category: "Dental Handpieces",
+    image: "images/airScalar.jpeg",
+    note: ""
+  },
+  {
+    title: "Handpiece 2",
+    category: "Dental Handpieces",
+    image: "images/handpiece2.jpg",
+    note: ""
+  },
+  {
+    title: "3 Way Syringe",
+    category: "Dental Handpieces",
+    image: "images/3waysyringe.jpeg",
+    note: "",
+    fit: "contain"
+  },
+  {
     title: "Chair Part 01",
     category: "Dental Chair Parts",
     image: "images/chairparts1.png",
