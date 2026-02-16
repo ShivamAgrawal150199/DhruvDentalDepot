@@ -485,16 +485,23 @@ main {
 }
 
 .checkout-form input,
-.checkout-form textarea {
+.checkout-form textarea,
+.checkout-form select {
   border: 1px solid #d9d2c7;
   border-radius: 10px;
   padding: 10px 12px;
   font: inherit;
+  background: #fff;
 }
 
 .checkout-summary ul {
   margin: 0;
   padding-left: 20px;
+  display: grid;
+  gap: 10px;
+}
+
+#productList {
   display: grid;
   gap: 10px;
 }

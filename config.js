@@ -1,3 +1,3 @@
-window.APP_CONFIG = {
+gitwindow.APP_CONFIG = {
   API_BASE: "http://localhost:4000"
 };

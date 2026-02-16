@@ -1,4 +1,4 @@
-﻿const inventory = [
+﻿const defaultInventory = [
   {
     title: "Instrument 01",
     category: "Accessories",
@@ -324,13 +324,21 @@ const CART_KEY = "ddd_cart";
 const SESSION_KEY = "ddd_session_profile";
 const API_BASE = window.APP_CONFIG?.API_BASE || "http://localhost:4000";
 
-const productMap = new Map(inventory.map((item) => [item.id, item]));
+let inventory = [...defaultInventory];
+let productMap = new Map(inventory.map((item) => [item.id, item]));
 
 const grid = document.getElementById("grid");
 const filters = document.getElementById("filters");
 const pageCategory = document.body?.dataset?.category || "All";
 
-const categories = ["All", ...new Set(inventory.map((item) => item.category))];
+function getCategories() {
+  return ["All", ...new Set(inventory.map((item) => item.category))];
+}
+
+function setInventory(nextInventory) {
+  inventory = nextInventory;
+  productMap = new Map(inventory.map((item) => [item.id, item]));
+}
 
 function safeJsonParse(value, fallback) {
   try {
@@ -365,6 +373,30 @@ async function apiRequest(path, options = {}) {
   }
 
   return payload;
+}
+
+async function loadInventoryFromServer() {
+  try {
+    const data = await apiRequest("/products");
+    const products = Array.isArray(data?.products) ? data.products : [];
+    if (products.length) {
+      setInventory(
+        products.map((item) => ({
+          id: String(item.id || ""),
+          title: String(item.title || ""),
+          category: String(item.category || ""),
+          image: String(item.image || ""),
+          note: String(item.note || ""),
+          fit: item.fit ? String(item.fit) : ""
+        }))
+      );
+      return;
+    }
+  } catch {
+    // Use fallback inventory when backend is unavailable.
+  }
+
+  setInventory([...defaultInventory]);
 }
 
 function getSession() {
@@ -423,8 +455,15 @@ function renderAuthNav() {
   if (!navLinks) return;
 
   const session = getSession();
+  let adminLink = navLinks.querySelector("[data-admin-link]");
   let authLink = navLinks.querySelector("[data-auth-link]");
   let logoutBtn = navLinks.querySelector("[data-logout-btn]");
+
+  if (!adminLink) {
+    adminLink = document.createElement("a");
+    adminLink.setAttribute("data-admin-link", "true");
+    adminLink.textContent = "Admin";
+  }
 
   if (!authLink) {
     authLink = document.createElement("a");
@@ -433,6 +472,11 @@ function renderAuthNav() {
   }
 
   if (session) {
+    if (!adminLink.parentElement) {
+      navLinks.appendChild(adminLink);
+    }
+    adminLink.href = "admin-products.html";
+
     authLink.href = "login.html?next=checkout.html";
     authLink.textContent = session.name ? `Hi, ${session.name}` : "My Account";
 
@@ -445,6 +489,7 @@ function renderAuthNav() {
       navLinks.appendChild(logoutBtn);
     }
   } else {
+    if (adminLink.parentElement) adminLink.remove();
     authLink.href = "login.html?next=checkout.html";
     authLink.textContent = "Login";
     if (logoutBtn) logoutBtn.remove();
@@ -528,7 +573,7 @@ function getCartDetailed() {
 function renderFilters() {
   if (!filters) return;
   filters.innerHTML = "";
-  categories.forEach((cat) => {
+  getCategories().forEach((cat) => {
     const btn = document.createElement("button");
     btn.className = "filter-btn" + (cat === "All" ? " active" : "");
     btn.textContent = cat;
@@ -772,6 +817,100 @@ async function setupAuthPage() {
   });
 }
 
+async function setupAdminPage() {
+  const adminForm = document.getElementById("productForm");
+  const adminList = document.getElementById("productList");
+  const adminStatus = document.getElementById("adminStatus");
+  if (!adminForm || !adminList) return;
+
+  const session = (await refreshSessionFromServer()) || getSession();
+  if (!session) {
+    window.location.href = "login.html?next=admin-products.html";
+    return;
+  }
+
+  async function renderAdminProducts() {
+    try {
+      const data = await apiRequest("/products");
+      const products = Array.isArray(data?.products) ? data.products : [];
+      adminList.innerHTML = "";
+
+      if (!products.length) {
+        adminList.innerHTML = `<div class="empty">No products in database yet.</div>`;
+        return;
+      }
+
+      products.forEach((item) => {
+        const row = document.createElement("article");
+        row.className = "cart-item";
+        row.innerHTML = `
+          <img src="${item.image}" alt="${item.title}" />
+          <div>
+            <h4>${item.title}</h4>
+            <p>${item.category}</p>
+          </div>
+          <div></div>
+          <button class="ghost small" type="button" data-delete-product="${item.id}">Delete</button>
+        `;
+        adminList.appendChild(row);
+      });
+    } catch (error) {
+      adminList.innerHTML = `<div class="empty">Could not load products.</div>`;
+      if (adminStatus) adminStatus.textContent = error.message || "Failed loading products.";
+    }
+  }
+
+  adminForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const formData = new FormData(adminForm);
+    const payload = {
+      title: String(formData.get("title") || "").trim(),
+      category: String(formData.get("category") || "").trim(),
+      image: String(formData.get("image") || "").trim(),
+      note: String(formData.get("note") || "").trim(),
+      fit: String(formData.get("fit") || "").trim()
+    };
+
+    if (!payload.title || !payload.category || !payload.image) {
+      if (adminStatus) adminStatus.textContent = "Title, category and image are required.";
+      return;
+    }
+
+    try {
+      await apiRequest("/products", {
+        method: "POST",
+        body: payload
+      });
+      adminForm.reset();
+      if (adminStatus) adminStatus.textContent = "Product added.";
+      await renderAdminProducts();
+      await loadInventoryFromServer();
+    } catch (error) {
+      if (adminStatus) adminStatus.textContent = error.message || "Could not add product.";
+    }
+  });
+
+  adminList.addEventListener("click", async (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
+    const button = target.closest("[data-delete-product]");
+    if (!button) return;
+    const id = button.getAttribute("data-delete-product");
+    if (!id) return;
+
+    try {
+      await apiRequest(`/products/${id}`, { method: "DELETE" });
+      if (adminStatus) adminStatus.textContent = "Product deleted.";
+      await renderAdminProducts();
+      await loadInventoryFromServer();
+    } catch (error) {
+      if (adminStatus) adminStatus.textContent = error.message || "Could not delete product.";
+    }
+  });
+
+  await renderAdminProducts();
+}
+
 function setupCartInteractions() {
   if (grid) {
     grid.addEventListener("click", (event) => {
@@ -836,6 +975,8 @@ async function bootstrap() {
   const canLoad = await requireAuthForCheckout();
   if (!canLoad) return;
 
+  await loadInventoryFromServer();
+
   renderFilters();
   renderCards(pageCategory);
   renderCartPage();
@@ -843,6 +984,7 @@ async function bootstrap() {
   setupCartInteractions();
   handleCheckoutSubmit();
   await setupAuthPage();
+  await setupAdminPage();
   updateCartBadge();
   renderAuthNav();
   setupMobileNavMenu();
@@ -855,3 +997,5 @@ async function bootstrap() {
 }
 
 bootstrap();
+
+
