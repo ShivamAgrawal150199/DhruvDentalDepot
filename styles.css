@@ -7,6 +7,11 @@
   --accent-2: #00a7a7;
   --card: #ffffff;
   --shadow: rgba(26, 29, 31, 0.08);
+  --panel-bg: rgba(255, 255, 255, 0.88);
+  --page-bg: radial-gradient(circle at top left, #fff5e8 0%, #f2fbfb 40%, #f7f4ef 70%, #f0efe8 100%);
+  --hover-bg: #fff2df;
+  --muted-border: #d9d2c7;
+  --line-border: #eadfce;
 }
 
 * {
@@ -17,9 +22,25 @@ body {
   margin: 0;
   font-family: "Plus Jakarta Sans", system-ui, sans-serif;
   color: var(--ink);
-  background: radial-gradient(circle at top left, #fff5e8 0%, #f2fbfb 40%, #f7f4ef 70%, #f0efe8 100%);
+  background: var(--page-bg);
   min-height: 100vh;
   overflow-x: hidden;
+}
+
+body.dark-theme {
+  --ink: #e7ecef;
+  --slate: #aab7c0;
+  --mist: #182028;
+  --cream: #2a343d;
+  --accent: #ff9b61;
+  --accent-2: #31c7c7;
+  --card: #1f2a33;
+  --shadow: rgba(0, 0, 0, 0.32);
+  --panel-bg: rgba(24, 32, 40, 0.92);
+  --page-bg: radial-gradient(circle at top left, #1d252d 0%, #121920 40%, #11171d 100%);
+  --hover-bg: #303c46;
+  --muted-border: #42515e;
+  --line-border: #394550;
 }
 
 .noise {
@@ -37,7 +58,7 @@ body {
   margin: 18px 8vw 0;
   padding: 12px 16px;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.88);
+  background: var(--panel-bg);
   backdrop-filter: blur(8px);
   box-shadow: 0 12px 30px var(--shadow);
   display: flex;
@@ -78,7 +99,7 @@ body {
 }
 
 .nav-links a:hover {
-  background: #fff2df;
+  background: var(--hover-bg);
 }
 
 .nav-toggle {
@@ -94,7 +115,8 @@ body {
   white-space: nowrap;
 }
 
-.nav-btn {
+.nav-btn,
+.theme-toggle {
   border: 1.5px solid var(--ink);
   background: transparent;
   color: var(--ink);
@@ -257,6 +279,11 @@ main {
   box-shadow: 0 10px 24px var(--shadow);
 }
 
+body.dark-theme .filter-btn {
+  background: #2a343d;
+  color: var(--ink);
+}
+
 .filter-btn.active {
   background: var(--accent);
   color: #fff;
@@ -313,6 +340,10 @@ main {
   overflow: hidden;
 }
 
+body.dark-theme .card-media {
+  background: #29343d;
+}
+
 .card-media img {
   width: 100%;
   height: 100%;
@@ -352,7 +383,7 @@ main {
 
 .empty {
   padding: 24px;
-  background: #fff;
+  background: var(--card);
   border-radius: 18px;
   box-shadow: 0 20px 40px var(--shadow);
   color: var(--slate);
@@ -362,7 +393,7 @@ main {
   margin-top: 24px;
   padding: 24px;
   border-radius: 24px;
-  background: #ffffff;
+  background: var(--card);
   box-shadow: 0 20px 40px var(--shadow);
 }
 
@@ -409,7 +440,7 @@ main {
 .cart-summary,
 .checkout-form,
 .checkout-summary {
-  background: #fff;
+  background: var(--card);
   border-radius: 18px;
   box-shadow: 0 20px 40px var(--shadow);
   padding: 20px;
@@ -432,7 +463,7 @@ main {
   gap: 14px;
   align-items: center;
   padding: 12px 0;
-  border-bottom: 1px solid #f1ede8;
+  border-bottom: 1px solid var(--line-border);
 }
 
 .cart-item:last-child {
@@ -463,12 +494,17 @@ main {
 }
 
 .qty-group button {
-  border: 1px solid #d9d2c7;
+  border: 1px solid var(--muted-border);
   background: #fff;
+  color: var(--ink);
   width: 30px;
   height: 30px;
   border-radius: 8px;
   cursor: pointer;
+}
+
+body.dark-theme .qty-group button {
+  background: #2a343d;
 }
 
 .checkout-form {
@@ -487,11 +523,18 @@ main {
 .checkout-form input,
 .checkout-form textarea,
 .checkout-form select {
-  border: 1px solid #d9d2c7;
+  border: 1px solid var(--muted-border);
   border-radius: 10px;
   padding: 10px 12px;
   font: inherit;
   background: #fff;
+  color: var(--ink);
+}
+
+body.dark-theme .checkout-form input,
+body.dark-theme .checkout-form textarea,
+body.dark-theme .checkout-form select {
+  background: #2a343d;
 }
 
 .checkout-summary ul {
@@ -571,7 +614,8 @@ footer {
   }
 
   .nav-links a,
-  .nav-btn {
+  .nav-btn,
+  .theme-toggle {
     font-size: 0.8rem;
     padding: 6px 8px;
   }
@@ -581,7 +625,7 @@ footer {
     width: 100%;
     margin-top: 6px;
     padding-top: 8px;
-    border-top: 1px solid #eadfce;
+    border-top: 1px solid var(--line-border);
     flex-wrap: wrap;
   }
 

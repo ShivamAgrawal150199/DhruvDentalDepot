@@ -323,6 +323,7 @@
 const CART_KEY = "ddd_cart";
 const SESSION_KEY = "ddd_session_profile";
 const API_BASE = window.APP_CONFIG?.API_BASE || "http://localhost:4000";
+const THEME_KEY = "ddd_theme";
 
 let inventory = [...defaultInventory];
 let productMap = new Map(inventory.map((item) => [item.id, item]));
@@ -346,6 +347,44 @@ function safeJsonParse(value, fallback) {
   } catch {
     return fallback;
   }
+}
+
+function getStoredTheme() {
+  const saved = localStorage.getItem(THEME_KEY);
+  return saved === "dark" ? "dark" : "light";
+}
+
+function applyTheme(theme) {
+  const isDark = theme === "dark";
+  document.body.classList.toggle("dark-theme", isDark);
+}
+
+function setupThemeToggle() {
+  const navLinks = document.querySelector(".nav-links");
+  if (!navLinks) return;
+
+  let button = navLinks.querySelector("[data-theme-toggle]");
+  if (!button) {
+    button = document.createElement("button");
+    button.type = "button";
+    button.className = "theme-toggle";
+    button.setAttribute("data-theme-toggle", "true");
+    navLinks.appendChild(button);
+  }
+
+  const syncLabel = () => {
+    const isDark = document.body.classList.contains("dark-theme");
+    button.textContent = isDark ? "Light Mode" : "Dark Mode";
+  };
+
+  syncLabel();
+
+  button.addEventListener("click", () => {
+    const nextTheme = document.body.classList.contains("dark-theme") ? "light" : "dark";
+    localStorage.setItem(THEME_KEY, nextTheme);
+    applyTheme(nextTheme);
+    syncLabel();
+  });
 }
 
 async function apiRequest(path, options = {}) {
@@ -976,6 +1015,8 @@ function setupCartInteractions() {
 }
 
 async function bootstrap() {
+  applyTheme(getStoredTheme());
+
   if (pageCategory !== "All" && filters) {
     filters.style.display = "none";
   }
@@ -995,6 +1036,7 @@ async function bootstrap() {
   await setupAdminPage();
   updateCartBadge();
   renderAuthNav();
+  setupThemeToggle();
   setupMobileNavMenu();
 
   const user = await refreshSessionFromServer();
