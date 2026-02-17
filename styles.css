@@ -12,6 +12,8 @@
   --hover-bg: #fff2df;
   --muted-border: #d9d2c7;
   --line-border: #eadfce;
+  --primary-bg: #1a1d1f;
+  --primary-text: #ffffff;
 }
 
 * {
@@ -41,6 +43,8 @@ body.dark-theme {
   --hover-bg: #303c46;
   --muted-border: #42515e;
   --line-border: #394550;
+  --primary-bg: #ff9b61;
+  --primary-text: #1a1d1f;
 }
 
 .noise {
@@ -202,8 +206,8 @@ body.dark-theme {
 }
 
 .primary {
-  background: var(--ink);
-  color: #fff;
+  background: var(--primary-bg);
+  color: var(--primary-text);
   box-shadow: 0 12px 30px rgba(26, 29, 31, 0.18);
 }
 
