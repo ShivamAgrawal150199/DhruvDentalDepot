@@ -773,12 +773,20 @@ async function setupAuthPage() {
     return;
   }
 
+  let selectedAction = "login";
+  form.querySelectorAll("button[name='action']").forEach((button) => {
+    button.addEventListener("click", () => {
+      selectedAction = String(button.value || "login");
+    });
+  });
+
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const formData = new FormData(form);
     const submitter = event.submitter;
     const action =
       (submitter instanceof HTMLButtonElement && submitter.value) ||
+      selectedAction ||
       String(formData.get("action") || "login");
     const name = String(formData.get("name") || "").trim();
     const email = String(formData.get("email") || "").trim().toLowerCase();
