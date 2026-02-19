@@ -644,6 +644,7 @@ function renderCards(category) {
     card.style.animationDelay = `${index * 0.04}s`;
 
     const fitClass = item.fit === "contain" ? "fit-contain" : "";
+    const noteHtml = item.note ? `<p>${item.note}</p>` : "";
     card.innerHTML = `
       <div class="card-media">
         <img src="${item.image}" alt="${item.title}" class="${fitClass}" />
@@ -651,7 +652,7 @@ function renderCards(category) {
       <div class="card-body">
         <span class="tag">${item.category}</span>
         <h4>${item.title}</h4>
-        <p>${item.note || "Available on request"}</p>
+        ${noteHtml}
         <div class="card-actions">
           <button class="primary add-cart-btn" data-id="${item.id}" type="button">Add to Cart</button>
         </div>

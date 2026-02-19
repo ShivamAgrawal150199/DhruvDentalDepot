@@ -375,6 +375,14 @@ body.dark-theme .card-media {
   width: 100%;
 }
 
+/* Temporarily hide commerce/auth actions until backend rollout is complete. */
+.add-cart-btn,
+.cart-link,
+[data-auth-link],
+[data-logout-btn] {
+  display: none !important;
+}
+
 .tag {
   display: inline-block;
   font-size: 0.7rem;
