@@ -249,6 +249,36 @@ body.dark-theme {
   color: var(--slate);
 }
 
+.brand-stat {
+  align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(255, 140, 66, 0.18), rgba(0, 167, 167, 0.14));
+  white-space: nowrap;
+}
+
+.brand-stat span,
+.brand-stat label {
+  font-family: "Fraunces", serif;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  font-size: 1.45rem;
+  font-weight: 700;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.brand-stat span {
+  font-size: 1.45rem;
+}
+
+.brand-stat label {
+  font-size: 1.45rem;
+}
+
 main {
   padding: 0 8vw 64px;
 }
@@ -664,6 +694,16 @@ footer {
 
   .qty-group {
     grid-column: 2;
+  }
+
+  .brand-stat {
+    gap: 6px;
+    padding: 8px 10px;
+  }
+
+  .brand-stat span,
+  .brand-stat label {
+    font-size: 1.05rem;
   }
 }
 
