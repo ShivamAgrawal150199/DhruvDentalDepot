@@ -650,6 +650,14 @@ footer {
     order: 2;
   }
 
+  .category-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .grid:not(.category-grid) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   .cart-item {
     grid-template-columns: 72px 1fr;
   }
