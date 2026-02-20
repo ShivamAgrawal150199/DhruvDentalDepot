@@ -558,7 +558,7 @@ function setupMobileNavMenu() {
   navLinks.addEventListener("click", (event) => {
     const target = event.target;
     if (!(target instanceof HTMLElement)) return;
-    if (!target.closest("a")) return;
+    if (!target.closest("a, [data-theme-toggle]")) return;
     if (!topNav.classList.contains("menu-open")) return;
     topNav.classList.remove("menu-open");
     toggle.setAttribute("aria-expanded", "false");
@@ -640,7 +640,7 @@ function renderCards(category) {
 
   data.forEach((item, index) => {
     const card = document.createElement("article");
-    card.className = "card fade-in";
+    card.className = "card";
     card.style.animationDelay = `${index * 0.04}s`;
 
     const fitClass = item.fit === "contain" ? "fit-contain" : "";
@@ -1015,6 +1015,31 @@ function setupCartInteractions() {
   });
 }
 
+function setupScrollReveal() {
+  const targets = document.querySelectorAll(".hero, .section-title, .card, .cart-layout, .checkout-layout, .auth-card");
+  if (!targets.length) return;
+
+  const observer = new IntersectionObserver(
+    (entries, obs) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-visible");
+        obs.unobserve(entry.target);
+      });
+    },
+    { threshold: 0.08, rootMargin: "0px 0px -6% 0px" }
+  );
+
+  targets.forEach((el, index) => {
+    el.classList.add("scroll-reveal");
+    el.style.setProperty("--reveal-delay", `${Math.min(index * 35, 280)}ms`);
+  });
+
+  requestAnimationFrame(() => {
+    targets.forEach((el) => observer.observe(el));
+  });
+}
+
 async function bootstrap() {
   applyTheme(getStoredTheme());
 
@@ -1039,6 +1064,7 @@ async function bootstrap() {
   renderAuthNav();
   setupThemeToggle();
   setupMobileNavMenu();
+  setupScrollReveal();
 
   const user = await refreshSessionFromServer();
   if (user) {
@@ -1048,5 +1074,6 @@ async function bootstrap() {
 }
 
 bootstrap();
+
 
 
