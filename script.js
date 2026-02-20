@@ -959,11 +959,70 @@ async function setupAdminPage() {
   await renderAdminProducts();
 }
 
+let imageLightbox = null;
+
+function isPhoneViewport() {
+  return window.matchMedia("(max-width: 720px)").matches;
+}
+
+function getImageLightbox() {
+  if (imageLightbox) return imageLightbox;
+
+  const overlay = document.createElement("div");
+  overlay.className = "image-lightbox";
+  overlay.setAttribute("aria-hidden", "true");
+  overlay.innerHTML = `
+    <button type="button" class="image-lightbox-close" aria-label="Close image preview">X</button>
+    <img src="" alt="" />
+  `;
+
+  overlay.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
+    if (target.classList.contains("image-lightbox") || target.classList.contains("image-lightbox-close")) {
+      closeImageLightbox();
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeImageLightbox();
+  });
+
+  document.body.appendChild(overlay);
+  imageLightbox = overlay;
+  return overlay;
+}
+
+function openImageLightbox(src, alt) {
+  if (!isPhoneViewport()) return;
+  const overlay = getImageLightbox();
+  const img = overlay.querySelector("img");
+  if (!(img instanceof HTMLImageElement)) return;
+
+  img.src = src;
+  img.alt = alt || "Product image";
+  overlay.classList.add("open");
+  overlay.setAttribute("aria-hidden", "false");
+  document.body.classList.add("lightbox-open");
+}
+
+function closeImageLightbox() {
+  if (!imageLightbox) return;
+  imageLightbox.classList.remove("open");
+  imageLightbox.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("lightbox-open");
+}
+
 function setupCartInteractions() {
   if (grid) {
     grid.addEventListener("click", (event) => {
       const target = event.target;
       if (!(target instanceof HTMLElement)) return;
+      const image = target.closest(".card-media img");
+      if (image instanceof HTMLImageElement) {
+        openImageLightbox(image.currentSrc || image.src, image.alt);
+        return;
+      }
       const btn = target.closest(".add-cart-btn");
       if (!btn) return;
 
