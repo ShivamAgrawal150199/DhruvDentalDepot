@@ -473,6 +473,24 @@ body.dark-theme .card-media {
   background: #c72b5f;
 }
 
+.social-icon-link {
+  width: 56px;
+  height: 56px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 14px;
+  margin-right: 8px;
+}
+
+.social-icon-link img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  display: block;
+}
+
 .cart-layout,
 .checkout-layout {
   display: grid;

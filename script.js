@@ -1099,6 +1099,46 @@ function setupScrollReveal() {
   });
 }
 
+function setupInstagramFollowButton() {
+  const btn = document.getElementById("instagramFollowBtn");
+  if (!(btn instanceof HTMLAnchorElement)) return;
+
+  btn.addEventListener("click", (event) => {
+    const isMobile = window.matchMedia("(max-width: 980px)").matches;
+    if (!isMobile) return;
+
+    event.preventDefault();
+
+    const appProfileUrl = "instagram://user?username=dhruv_dental_depot";
+    const appSearchUrl = "instagram://search?query=dhruv_dental_depot";
+    const webUrl = "https://www.instagram.com/dhruv_dental_depot/";
+
+    const searchFallback = setTimeout(() => {
+      window.location.href = appSearchUrl;
+    }, 650);
+
+    const webFallback = setTimeout(() => {
+      window.location.href = webUrl;
+    }, 1500);
+
+    const clearFallbacks = () => {
+      clearTimeout(searchFallback);
+      clearTimeout(webFallback);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
+
+    const onVisibilityChange = () => {
+      if (!document.hidden) return;
+      clearFallbacks();
+    };
+
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    window.addEventListener("pagehide", clearFallbacks, { once: true });
+
+    window.location.href = appProfileUrl;
+  });
+}
+
 async function bootstrap() {
   applyTheme(getStoredTheme());
 
@@ -1124,6 +1164,7 @@ async function bootstrap() {
   setupThemeToggle();
   setupMobileNavMenu();
   setupScrollReveal();
+  setupInstagramFollowButton();
 
   const user = await refreshSessionFromServer();
   if (user) {
