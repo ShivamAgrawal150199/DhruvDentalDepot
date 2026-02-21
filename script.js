@@ -324,9 +324,14 @@ const CART_KEY = "ddd_cart";
 const SESSION_KEY = "ddd_session_profile";
 const API_BASE = window.APP_CONFIG?.API_BASE || "http://localhost:4000";
 const THEME_KEY = "ddd_theme";
+const CONTACT_PHONE = "+919335485398";
+const WHATSAPP_NUMBER = "919335485398";
 
 let inventory = [...defaultInventory];
 let productMap = new Map(inventory.map((item) => [item.id, item]));
+let activeCategory = "All";
+let searchQuery = "";
+let sortMode = "default";
 
 const grid = document.getElementById("grid");
 const filters = document.getElementById("filters");
@@ -623,17 +628,79 @@ function renderFilters() {
     });
     filters.appendChild(btn);
   });
+
+  setupProductTools();
+}
+
+function setupProductTools() {
+  if (!grid) return;
+  const toolbar = document.querySelector(".toolbar");
+  if (!toolbar) return;
+
+  let tools = toolbar.querySelector(".product-tools");
+  if (!tools) {
+    tools = document.createElement("div");
+    tools.className = "product-tools";
+    tools.innerHTML = `
+      <input type="search" id="productSearch" placeholder="Search products..." aria-label="Search products" />
+      <select id="productSort" aria-label="Sort products">
+        <option value="default">Sort: Default</option>
+        <option value="az">Sort: A to Z</option>
+        <option value="za">Sort: Z to A</option>
+      </select>
+    `;
+    toolbar.appendChild(tools);
+
+    const searchInput = tools.querySelector("#productSearch");
+    const sortSelect = tools.querySelector("#productSort");
+
+    if (searchInput instanceof HTMLInputElement) {
+      searchInput.addEventListener("input", () => {
+        searchQuery = searchInput.value.trim().toLowerCase();
+        renderCards(activeCategory);
+      });
+    }
+
+    if (sortSelect instanceof HTMLSelectElement) {
+      sortSelect.addEventListener("change", () => {
+        sortMode = sortSelect.value || "default";
+        renderCards(activeCategory);
+      });
+    }
+  }
+}
+
+function getQuickInquiryUrl(item) {
+  const text = `Hello Dhruv Dental Depot, I want details for ${item.title} (${item.category}).`;
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
 }
 
 function renderCards(category) {
   if (!grid) return;
-  const data = category === "All" ? inventory : inventory.filter((item) => item.category === category);
+  activeCategory = category || activeCategory;
+  let data = activeCategory === "All" ? [...inventory] : inventory.filter((item) => item.category === activeCategory);
+
+  if (searchQuery) {
+    data = data.filter((item) => {
+      const inTitle = item.title.toLowerCase().includes(searchQuery);
+      const inCategory = item.category.toLowerCase().includes(searchQuery);
+      const inNote = (item.note || "").toLowerCase().includes(searchQuery);
+      return inTitle || inCategory || inNote;
+    });
+  }
+
+  if (sortMode === "az") {
+    data.sort((a, b) => a.title.localeCompare(b.title));
+  } else if (sortMode === "za") {
+    data.sort((a, b) => b.title.localeCompare(a.title));
+  }
+
   grid.innerHTML = "";
 
   if (data.length === 0) {
     const empty = document.createElement("div");
     empty.className = "empty";
-    empty.textContent = "No products yet. Add items in script.js.";
+    empty.textContent = "No matching products found.";
     grid.appendChild(empty);
     return;
   }
@@ -655,6 +722,7 @@ function renderCards(category) {
         ${noteHtml}
         <div class="card-actions">
           <button class="primary add-cart-btn" data-id="${item.id}" type="button">Add to Cart</button>
+          <a class="ghost quick-inquiry-btn" href="${getQuickInquiryUrl(item)}" target="_blank" rel="noopener noreferrer">Quick Inquiry</a>
         </div>
       </div>
     `;
@@ -1139,6 +1207,18 @@ function setupInstagramFollowButton() {
   });
 }
 
+function setupStickyContactBar() {
+  if (document.querySelector(".sticky-contact-bar")) return;
+
+  const bar = document.createElement("div");
+  bar.className = "sticky-contact-bar";
+  bar.innerHTML = `
+    <a class="sticky-contact-item whatsapp" href="https://wa.me/${WHATSAPP_NUMBER}?text=Hello%20Dhruv%20Dental%20Depot" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+    <a class="sticky-contact-item call" href="tel:${CONTACT_PHONE}">Call</a>
+  `;
+  document.body.appendChild(bar);
+}
+
 async function bootstrap() {
   applyTheme(getStoredTheme());
 
@@ -1165,6 +1245,7 @@ async function bootstrap() {
   setupMobileNavMenu();
   setupScrollReveal();
   setupInstagramFollowButton();
+  setupStickyContactBar();
 
   const user = await refreshSessionFromServer();
   if (user) {

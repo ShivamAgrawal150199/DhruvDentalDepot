@@ -303,6 +303,28 @@ main {
   gap: 12px;
 }
 
+.product-tools {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-left: auto;
+}
+
+.product-tools input,
+.product-tools select {
+  height: 40px;
+  border: 1px solid var(--muted-border);
+  border-radius: 10px;
+  padding: 0 12px;
+  font: inherit;
+  background: var(--card);
+  color: var(--ink);
+}
+
+.product-tools input {
+  min-width: 210px;
+}
+
 .filter-btn {
   padding: 10px 14px;
   border-radius: 999px;
@@ -399,10 +421,19 @@ body.dark-theme .card-media {
 
 .card-actions {
   margin-top: 12px;
+  display: grid;
+  gap: 8px;
 }
 
 .add-cart-btn {
   width: 100%;
+}
+
+.quick-inquiry-btn {
+  width: 100%;
+  text-align: center;
+  border-color: #1fa855;
+  color: #1fa855;
 }
 
 /* Temporarily hide commerce/auth actions until backend rollout is complete. */
@@ -439,15 +470,165 @@ body.dark-theme .card-media {
   box-shadow: 0 20px 40px var(--shadow);
 }
 
+.trust-section {
+  margin-top: 24px;
+}
+
+.trust-section h3 {
+  margin: 0 0 14px;
+  font-family: "Fraunces", serif;
+  font-size: 1.7rem;
+}
+
+.trust-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.trust-card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 14px 30px var(--shadow);
+  border: 1px solid var(--line-border);
+}
+
+.trust-icon {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  margin-bottom: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.16);
+}
+
+.trust-card h4 {
+  margin: 0 0 8px;
+  font-size: 1.02rem;
+}
+
+.trust-card p {
+  margin: 0;
+  color: var(--slate);
+  line-height: 1.6;
+}
+
 .info-panel h3 {
   margin-top: 0;
   font-family: "Fraunces", serif;
+  font-size: 1.7rem;
 }
 
 .info-panel p {
   margin-bottom: 0;
   color: var(--slate);
   line-height: 1.7;
+}
+
+.about-intro {
+  margin-bottom: 14px;
+}
+
+.about-highlights {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.about-card {
+  background: linear-gradient(160deg, rgba(255, 140, 66, 0.1), rgba(0, 167, 167, 0.08));
+  border: 1px solid var(--line-border);
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.about-icon {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.14);
+}
+
+.about-card h4 {
+  margin: 0 0 6px;
+  font-size: 1rem;
+}
+
+.about-card p {
+  margin: 0;
+}
+
+.about-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.about-stats span {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--ink);
+  background: var(--cream);
+  border: 1px solid var(--line-border);
+}
+
+.faq-section {
+  margin-top: 24px;
+}
+
+.faq-section h3 {
+  margin: 0 0 14px;
+  font-family: "Fraunces", serif;
+  font-size: 1.7rem;
+}
+
+.faq-list {
+  display: grid;
+  gap: 10px;
+}
+
+.faq-item {
+  background: var(--card);
+  border: 1px solid var(--line-border);
+  border-radius: 14px;
+  padding: 12px 14px;
+  box-shadow: 0 12px 24px var(--shadow);
+}
+
+.faq-item summary {
+  cursor: pointer;
+  font-weight: 700;
+  list-style: none;
+}
+
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-item p {
+  margin: 10px 0 2px;
+  color: var(--slate);
+  line-height: 1.6;
 }
 
 .whatsapp-btn {
@@ -471,6 +652,37 @@ body.dark-theme .card-media {
 
 .instagram-btn:hover {
   background: #c72b5f;
+}
+
+.sticky-contact-bar {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  display: none;
+  gap: 10px;
+  z-index: 9980;
+}
+
+.sticky-contact-item {
+  flex: 1;
+  height: 44px;
+  border-radius: 12px;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.22);
+}
+
+.sticky-contact-item.whatsapp {
+  background: #1fa855;
+}
+
+.sticky-contact-item.call {
+  background: #0a7c90;
 }
 
 .social-icon-link {
@@ -714,6 +926,24 @@ footer {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .product-tools {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .product-tools input,
+  .product-tools select {
+    width: 100%;
+  }
+
+  .trust-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .about-highlights {
+    grid-template-columns: 1fr;
+  }
+
   .cart-item {
     grid-template-columns: 72px 1fr;
   }
@@ -730,6 +960,14 @@ footer {
   .brand-stat span,
   .brand-stat label {
     font-size: 1.05rem;
+  }
+
+  .sticky-contact-bar {
+    display: flex;
+  }
+
+  body {
+    padding-bottom: 70px;
   }
 }
 
