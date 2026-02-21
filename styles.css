@@ -465,6 +465,14 @@ body.dark-theme .card-media {
   background: #178646;
 }
 
+.instagram-btn {
+  background: #e1306c;
+}
+
+.instagram-btn:hover {
+  background: #c72b5f;
+}
+
 .cart-layout,
 .checkout-layout {
   display: grid;
