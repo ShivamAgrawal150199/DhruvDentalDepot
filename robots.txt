@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ddent.co.in/sitemap.xml
