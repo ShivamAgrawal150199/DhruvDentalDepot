@@ -202,79 +202,79 @@
     fit: "contain"
   },
   {
-    title: "Chair Part 01",
+    title: "Water Filter",
     category: "Dental Chair Parts",
     image: "images/chairparts1.png",
     note: ""
   },
   {
-    title: "Chair Part 02",
+    title: "Control Valve",
     category: "Dental Chair Parts",
     image: "images/chairparts2.png",
     note: ""
   },
   {
-    title: "Chair Part 03",
+    title: "Integrated Valve",
     category: "Dental Chair Parts",
     image: "images/chairparts3.png",
     note: ""
   },
   {
-    title: "Chair Part 04",
+    title: "Air Rreducer",
     category: "Dental Chair Parts",
     image: "images/chairparts4.png",
     note: ""
   },
   {
-    title: "Chair Part 05",
+    title: "Weak Suction holder with connector",
     category: "Dental Chair Parts",
     image: "images/chairparts5.png",
     note: ""
   },
   {
-    title: "Chair Part 06",
+    title: "Normal open valve",
     category: "Dental Chair Parts",
     image: "images/chairparts6.png",
     note: ""
   },
   {
-    title: "Chair Part 07",
+    title: "Foot Control",
     category: "Dental Chair Parts",
     image: "images/chairparts7.png",
     note: ""
   },
   {
-    title: "Chair Part 08",
+    title: "Square pressure meter",
     category: "Dental Chair Parts",
     image: "images/chairparts8.png",
     note: ""
   },
   {
-    title: "Chair Part 09",
+    title: "Pressure valve",
     category: "Dental Chair Parts",
     image: "images/chairparts9.png",
     note: ""
   },
   {
-    title: "Chair Part 10",
+    title: "Glass Bowl",
     category: "Dental Chair Parts",
     image: "images/chairparts10.png",
     note: ""
   },
   {
-    title: "Chair Part 11",
+    title: "Glass Bowl",
     category: "Dental Chair Parts",
     image: "images/chairparts11.png",
     note: ""
   },
   {
-    title: "Chair Part 12",
+    title: "Glass Bowl",
     category: "Dental Chair Parts",
     image: "images/chairparts12.png",
     note: ""
   },
   {
-    title: "Chair Part 13",
+    title: "Glass Bowl",
     category: "Dental Chair Parts",
     image: "images/chairparts13.png",
     note: ""
