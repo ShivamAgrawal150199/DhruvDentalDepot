@@ -675,6 +675,75 @@ function getQuickInquiryUrl(item) {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
 }
 
+let productDrawer = null;
+
+function getProductDrawer() {
+  if (productDrawer) return productDrawer;
+
+  const drawer = document.createElement("div");
+  drawer.className = "product-drawer";
+  drawer.setAttribute("aria-hidden", "true");
+  drawer.innerHTML = `
+    <div class="product-drawer-backdrop" data-drawer-close="true"></div>
+    <aside class="product-drawer-panel" role="dialog" aria-modal="true" aria-label="Product details">
+      <button class="product-drawer-close" type="button" data-drawer-close="true" aria-label="Close details">X</button>
+      <div class="product-drawer-content"></div>
+    </aside>
+  `;
+
+  drawer.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
+    if (!target.closest("[data-drawer-close]")) return;
+    closeProductDrawer();
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeProductDrawer();
+  });
+
+  document.body.appendChild(drawer);
+  productDrawer = drawer;
+  return drawer;
+}
+
+function openProductDrawer(productId) {
+  const product = productMap.get(productId);
+  if (!product) return;
+
+  const drawer = getProductDrawer();
+  const content = drawer.querySelector(".product-drawer-content");
+  if (!(content instanceof HTMLElement)) return;
+
+  const fitClass = product.fit === "contain" ? "fit-contain" : "";
+  const noteHtml = product.note ? `<p class="product-drawer-note">${product.note}</p>` : "";
+  content.innerHTML = `
+    <div class="product-drawer-media">
+      <img src="${product.image}" alt="${product.title}" class="${fitClass}" />
+    </div>
+    <div class="product-drawer-info">
+      <span class="tag">${product.category}</span>
+      <h3>${product.title}</h3>
+      ${noteHtml}
+      <p class="product-drawer-copy">For pricing, stock status, and compatibility details, contact us directly.</p>
+      <div class="product-drawer-actions">
+        <a class="primary" href="${getQuickInquiryUrl(product)}" target="_blank" rel="noopener noreferrer">Quick Inquiry</a>
+      </div>
+    </div>
+  `;
+
+  drawer.classList.add("open");
+  drawer.setAttribute("aria-hidden", "false");
+  document.body.classList.add("drawer-open");
+}
+
+function closeProductDrawer() {
+  if (!productDrawer) return;
+  productDrawer.classList.remove("open");
+  productDrawer.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("drawer-open");
+}
+
 function renderCards(category) {
   if (!grid) return;
   activeCategory = category || activeCategory;
@@ -717,12 +786,18 @@ function renderCards(category) {
         <img src="${item.image}" alt="${item.title}" class="${fitClass}" />
       </div>
       <div class="card-body">
-        <span class="tag">${item.category}</span>
         <h4>${item.title}</h4>
         ${noteHtml}
         <div class="card-actions">
+          <button class="ghost details-btn" data-details-id="${item.id}" type="button">
+            <span class="action-text">View Details</span>
+            <img class="action-icon" src="images/viewdetails.png" alt="View details" />
+          </button>
           <button class="primary add-cart-btn" data-id="${item.id}" type="button">Add to Cart</button>
-          <a class="ghost quick-inquiry-btn" href="${getQuickInquiryUrl(item)}" target="_blank" rel="noopener noreferrer">Quick Inquiry</a>
+          <a class="ghost quick-inquiry-btn" href="${getQuickInquiryUrl(item)}" target="_blank" rel="noopener noreferrer">
+            <span class="action-text">Quick Inquiry</span>
+            <img class="action-icon" src="images/inquiry.png" alt="Quick inquiry" />
+          </a>
         </div>
       </div>
     `;
@@ -1086,6 +1161,12 @@ function setupCartInteractions() {
     grid.addEventListener("click", (event) => {
       const target = event.target;
       if (!(target instanceof HTMLElement)) return;
+      const detailsBtn = target.closest(".details-btn");
+      if (detailsBtn instanceof HTMLElement) {
+        const detailsId = detailsBtn.getAttribute("data-details-id");
+        if (detailsId) openProductDrawer(detailsId);
+        return;
+      }
       const image = target.closest(".card-media img");
       if (image instanceof HTMLImageElement) {
         openImageLightbox(image.currentSrc || image.src, image.alt);
