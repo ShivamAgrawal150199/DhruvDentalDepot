@@ -529,6 +529,29 @@ body.dark-theme .card-media {
   line-height: 1.6;
 }
 
+.seo-landing-links {
+  margin-top: 24px;
+}
+
+.seo-landing-links h3 {
+  margin: 0 0 14px;
+  font-family: "Fraunces", serif;
+  font-size: 1.7rem;
+}
+
+.seo-link-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.seo-link-grid .ghost {
+  text-align: center;
+  background: var(--card);
+  border-color: var(--line-border);
+  box-shadow: 0 12px 24px var(--shadow);
+}
+
 .info-panel h3 {
   margin-top: 0;
   font-family: "Fraunces", serif;
@@ -638,6 +661,29 @@ body.dark-theme .card-media {
   margin: 10px 0 2px;
   color: var(--slate);
   line-height: 1.6;
+}
+
+.price-list-form {
+  margin-top: 12px;
+  display: grid;
+  gap: 10px;
+}
+
+.price-list-form input,
+.price-list-form select,
+.price-list-form textarea {
+  border: 1px solid var(--muted-border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font: inherit;
+  background: #fff;
+  color: var(--ink);
+}
+
+body.dark-theme .price-list-form input,
+body.dark-theme .price-list-form select,
+body.dark-theme .price-list-form textarea {
+  background: #2a343d;
 }
 
 .whatsapp-btn {
@@ -985,6 +1031,10 @@ footer {
   }
 
   .trust-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .seo-link-grid {
     grid-template-columns: 1fr;
   }
 

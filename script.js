@@ -323,6 +323,7 @@
 const CART_KEY = "ddd_cart";
 const SESSION_KEY = "ddd_session_profile";
 const API_BASE = window.APP_CONFIG?.API_BASE || "http://localhost:4000";
+const SITE_URL = window.APP_CONFIG?.SITE_URL || window.location.origin;
 const THEME_KEY = "ddd_theme";
 const CONTACT_PHONE = "+919335485398";
 const WHATSAPP_NUMBER = "919335485398";
@@ -1300,6 +1301,41 @@ function setupStickyContactBar() {
   document.body.appendChild(bar);
 }
 
+function setupPriceListForm() {
+  const form = document.getElementById("priceListForm");
+  if (!(form instanceof HTMLFormElement)) return;
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const formData = new FormData(form);
+
+    const name = String(formData.get("name") || "").trim();
+    const phone = String(formData.get("phone") || "").trim();
+    const city = String(formData.get("city") || "").trim();
+    const businessType = String(formData.get("businessType") || "").trim();
+    const requirements = String(formData.get("requirements") || "").trim();
+
+    if (!name || !phone || !businessType) return;
+
+    const messageLines = [
+      "Hello Dhruv Dental Depot,",
+      "I want to request a price list.",
+      "",
+      `Name: ${name}`,
+      `Phone: ${phone}`,
+      `Business Type: ${businessType}`
+    ];
+
+    if (city) messageLines.push(`City: ${city}`);
+    if (requirements) messageLines.push(`Requirements: ${requirements}`);
+
+    const message = messageLines.join("\n");
+    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+    form.reset();
+  });
+}
+
 async function bootstrap() {
   applyTheme(getStoredTheme());
 
@@ -1327,6 +1363,7 @@ async function bootstrap() {
   setupScrollReveal();
   setupInstagramFollowButton();
   setupStickyContactBar();
+  setupPriceListForm();
 
   const user = await refreshSessionFromServer();
   if (user) {
