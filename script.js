@@ -99,85 +99,85 @@
     note: ""
   },
   {
-    title: "Compressor 01",
+    title: "Oil free compressor head 1 HP with accessories",
     category: "Dental Compressor Parts",
     image: "images/Comp1.jpeg",
     note: ""
   },
   {
-    title: "Compressor 02",
+    title: "Piston leather 0.75/1 HP",
     category: "Dental Compressor Parts",
     image: "images/Comp2.jpg",
     note: ""
   },
   {
-    title: "Compressor 03",
+    title: "Air Filter Metal",
     category: "Dental Compressor Parts",
     image: "images/Comp3.png",
     note: ""
   },
   {
-    title: "Compressor 04",
+    title: "Piston 1 HP",
     category: "Dental Compressor Parts",
     image: "images/Comp4.jpg",
     note: ""
   },
   {
-    title: "Compressor 05",
+    title: "Magnetic Valve",
     category: "Dental Compressor Parts",
     image: "images/Comp5.jpg",
     note: ""
   },
   {
-    title: "Compressor 06",
+    title: "Pressure Gauge",
     category: "Dental Compressor Parts",
     image: "images/Comp6.jpg",
     note: ""
   },
   {
-    title: "Compressor 07",
+    title: "Air out nozzle",
     category: "Dental Compressor Parts",
     image: "images/Comp7.jpg",
     note: ""
   },
   {
-    title: "Compressor 08",
+    title: "Moisture Filter",
     category: "Dental Compressor Parts",
     image: "images/Comp8.jpg",
     note: ""
   },
   {
-    title: "Compressor 09",
+    title: "Autocut Switch",
     category: "Dental Compressor Parts",
     image: "images/Comp9.jpeg",
     note: ""
   },
   {
-    title: "Compressor 10",
+    title: "Air pipe",
     category: "Dental Compressor Parts",
     image: "images/Comp10.jpeg",
     note: ""
   },
   {
-    title: "Compressor 11",
+    title: "Air filter plastic",
     category: "Dental Compressor Parts",
     image: "images/Comp11.png",
     note: ""
   },
   {
-    title: "Compressor 12",
+    title: "NRV",
     category: "Dental Compressor Parts",
     image: "images/Comp12.png",
     note: ""
   },
   {
-    title: "Compressor 13",
+    title: "Compressor bottom rubber set",
     category: "Dental Compressor Parts",
     image: "images/Comp13.jpeg",
     note: ""
   },
   {
-    title: "Compressor 14",
+    title: "NRV with magnetic valve",
     category: "Dental Compressor Parts",
     image: "images/Comp14.jpeg",
     note: ""
