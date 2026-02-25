@@ -244,6 +244,24 @@
     image: "images/chairparts1.png",
     note: ""
   },
+   {
+    title: "Chair Diaphragm",
+    category: "Dental Chair Parts",
+    image: "images/chairdiaphragm.png",
+    note: ""
+  },
+  {
+    title: "Bottle Cap",
+    category: "Dental Chair Parts",
+    image: "images/BottleCapp.png",
+    note: ""
+  },
+  {
+    title: "Glass Bowl Funnel",
+    category: "Dental Chair Parts",
+    image: "images/GlassBowlFunnel.png",
+    note: ""
+  },
   {
     title: "Control Valve",
     category: "Dental Chair Parts",
