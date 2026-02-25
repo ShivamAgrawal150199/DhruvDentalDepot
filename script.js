@@ -183,6 +183,36 @@
     note: ""
   },
   {
+    title: "Compressor Parts",
+    category: "Dental Compressor Parts",
+    image: "images/CompressorParts.png",
+    note: ""
+  },
+  {
+    title: "Compressor Parts",
+    category: "Dental Compressor Parts",
+    image: "images/CompressorParts2.png",
+    note: ""
+  },
+  {
+    title: "Compressor Parts",
+    category: "Dental Compressor Parts",
+    image: "images/CompressorParts3.png",
+    note: ""
+  },
+  {
+    title: "Compressor Parts",
+    category: "Dental Compressor Parts",
+    image: "images/CompressorParts4.png",
+    note: ""
+  },
+  {
+    title: "Compressor Parts",
+    category: "Dental Compressor Parts",
+    image: "images/CompressorParts5.png",
+    note: ""
+  },
+  {
     title: "Air Scalar",
     category: "Dental Handpieces",
     image: "images/airScalar.jpeg",
@@ -198,6 +228,13 @@
     title: "3 Way Syringe",
     category: "Dental Handpieces",
     image: "images/3waysyringe.jpeg",
+    note: "",
+    fit: "contain"
+  },
+  {
+    title: "Straight Handpiece",
+    category: "Dental Handpieces",
+    image: "images/straightHhandpiece.png",
     note: "",
     fit: "contain"
   },
@@ -253,6 +290,18 @@
     title: "Pressure valve",
     category: "Dental Chair Parts",
     image: "images/chairparts9.png",
+    note: ""
+  },
+  {
+    title: "Coupling",
+    category: "Dental Chair Parts",
+    image: "images/Coupling2to4.png",
+    note: ""
+  },
+  {
+    title: "Coupling",
+    category: "Dental Chair Parts",
+    image: "images/Coupling4to2.png",
     note: ""
   },
   {
