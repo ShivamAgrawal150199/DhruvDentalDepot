@@ -57,6 +57,12 @@
     note: ""
   },
   {
+    title: "Micromotor Cord",
+    category: "Accessories",
+    image: "images/MicromotorCord.jpeg",
+    note: ""
+  },
+  {
     title: "New 01",
     category: "Accessories",
     image: "images/new1.jpeg",
