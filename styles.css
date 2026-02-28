@@ -709,6 +709,14 @@ body.dark-theme .price-list-form textarea {
   background: #c72b5f;
 }
 
+.email-btn {
+  background: #1e7cc9;
+}
+
+.email-btn:hover {
+  background: #1969ab;
+}
+
 .sticky-contact-bar {
   position: fixed;
   left: 12px;
