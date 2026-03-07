@@ -410,6 +410,13 @@ let sortMode = "default";
 const grid = document.getElementById("grid");
 const filters = document.getElementById("filters");
 const pageCategory = document.body?.dataset?.category || "All";
+const CATEGORY_PAGE_MAP = {
+  "Dental Compressor Parts": "dental-compressor-parts.html",
+  "Dental Chair Parts": "dental-chair-parts.html",
+  "Dental Handpieces": "dental-handpieces.html",
+  "Dental Scaler Parts": "dental-scaler-parts.html",
+  Accessories: "accessories.html"
+};
 
 function getCategories() {
   return ["All", ...new Set(inventory.map((item) => item.category))];
@@ -418,6 +425,89 @@ function getCategories() {
 function setInventory(nextInventory) {
   inventory = nextInventory;
   productMap = new Map(inventory.map((item) => [item.id, item]));
+}
+
+function getCategoryPageHref(category) {
+  return CATEGORY_PAGE_MAP[category] || "#";
+}
+
+function getBreadcrumbHtml(items, extraClass = "") {
+  const classes = ["breadcrumb"];
+  if (extraClass) classes.push(extraClass);
+  const crumbs = items
+    .map((item, index) => {
+      const isLast = index === items.length - 1;
+      const label = item.label || "";
+      if (isLast || !item.href) {
+        return `<span class="breadcrumb-current" aria-current="page">${label}</span>`;
+      }
+      return `<a href="${item.href}">${label}</a>`;
+    })
+    .join(`<span class="breadcrumb-separator" aria-hidden="true">/</span>`);
+
+  return `<nav class="${classes.join(" ")}" aria-label="Breadcrumb">${crumbs}</nav>`;
+}
+
+function setupBreadcrumbs() {
+  if (pageCategory === "All") return;
+  const main = document.querySelector("main");
+  const toolbar = document.querySelector(".toolbar");
+  if (!(main instanceof HTMLElement) || !(toolbar instanceof HTMLElement)) return;
+  if (main.querySelector(".page-breadcrumb")) return;
+
+  toolbar.insertAdjacentHTML(
+    "beforebegin",
+    getBreadcrumbHtml(
+      [
+        { label: "Home", href: "index.html" },
+        { label: pageCategory }
+      ],
+      "page-breadcrumb"
+    )
+  );
+}
+
+function setGridState(kind, message) {
+  if (!grid) return;
+  const spinner = kind === "loading" ? `<span class="state-spinner" aria-hidden="true"></span>` : "";
+  grid.innerHTML = `<div class="empty state-${kind}">${spinner}<span class="state-message">${message}</span></div>`;
+}
+
+function bindImageFallbacks(root = document) {
+  const scopedRoot = root instanceof Element || root instanceof Document ? root : document;
+  const images = scopedRoot.querySelectorAll("img");
+
+  images.forEach((img) => {
+    if (!(img instanceof HTMLImageElement) || img.dataset.fallbackBound === "true") return;
+    img.dataset.fallbackBound = "true";
+
+    const frame = img.closest(".card-media, .product-drawer-media");
+    if (!(frame instanceof HTMLElement)) return;
+
+    let fallback = frame.querySelector(".image-fallback");
+    if (!(fallback instanceof HTMLElement)) {
+      fallback = document.createElement("div");
+      fallback.className = "image-fallback";
+      fallback.textContent = "Image unavailable";
+      frame.appendChild(fallback);
+    }
+
+    const showFallback = () => {
+      frame.classList.add("has-image-error");
+      img.alt = "Image unavailable";
+    };
+
+    const hideFallback = () => {
+      frame.classList.remove("has-image-error");
+    };
+
+    img.addEventListener("error", showFallback);
+    img.addEventListener("load", hideFallback);
+
+    if (img.complete && img.naturalWidth === 0) {
+      showFallback();
+    }
+  });
 }
 
 function safeJsonParse(value, fallback) {
@@ -794,8 +884,14 @@ function openProductDrawer(productId) {
   content.innerHTML = `
     <div class="product-drawer-media">
       <img src="${product.image}" alt="${product.title}" class="${fitClass}" />
+      <div class="image-fallback">Image unavailable</div>
     </div>
     <div class="product-drawer-info">
+      ${getBreadcrumbHtml([
+        { label: "Home", href: "index.html" },
+        { label: product.category, href: getCategoryPageHref(product.category) },
+        { label: product.title }
+      ], "breadcrumb-inline")}
       <span class="tag">${product.category}</span>
       <h3>${product.title}</h3>
       ${noteHtml}
@@ -805,6 +901,8 @@ function openProductDrawer(productId) {
       </div>
     </div>
   `;
+
+  bindImageFallbacks(content);
 
   drawer.classList.add("open");
   drawer.setAttribute("aria-hidden", "false");
@@ -841,10 +939,7 @@ function renderCards(category) {
   grid.innerHTML = "";
 
   if (data.length === 0) {
-    const empty = document.createElement("div");
-    empty.className = "empty";
-    empty.textContent = "No matching products found.";
-    grid.appendChild(empty);
+    setGridState("empty", "No products found.");
     return;
   }
 
@@ -858,6 +953,7 @@ function renderCards(category) {
     card.innerHTML = `
       <div class="card-media">
         <img src="${item.image}" alt="${item.title}" class="${fitClass}" />
+        <div class="image-fallback">Image unavailable</div>
       </div>
       <div class="card-body">
         <h4>${item.title}</h4>
@@ -878,6 +974,8 @@ function renderCards(category) {
 
     grid.appendChild(card);
   });
+
+  bindImageFallbacks(grid);
 }
 
 function renderCartPage() {
@@ -1419,9 +1517,11 @@ async function bootstrap() {
   const canLoad = await requireAuthForCheckout();
   if (!canLoad) return;
 
+  setGridState("loading", "Loading products...");
   await loadInventoryFromServer();
 
   renderFilters();
+  setupBreadcrumbs();
   renderCards(pageCategory);
   renderCartPage();
   renderCheckoutSummary();
