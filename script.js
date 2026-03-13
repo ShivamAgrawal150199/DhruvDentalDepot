@@ -397,6 +397,7 @@ const CART_KEY = "ddd_cart";
 const SESSION_KEY = "ddd_session_profile";
 const API_BASE = window.APP_CONFIG?.API_BASE || "http://localhost:4000";
 const SITE_URL = window.APP_CONFIG?.SITE_URL || window.location.origin;
+const DISABLE_CHECKOUT = true;
 const THEME_KEY = "ddd_theme";
 const CONTACT_PHONE = "+919335485398";
 const WHATSAPP_NUMBER = "919335485398";
@@ -425,6 +426,36 @@ function getCategories() {
 function setInventory(nextInventory) {
   inventory = nextInventory;
   productMap = new Map(inventory.map((item) => [item.id, item]));
+}
+
+function getCurrentPagePath() {
+  const raw = window.location.pathname.split("/").pop() || "index.html";
+  const suffix = `${window.location.search || ""}${window.location.hash || ""}`;
+  return `${raw}${suffix}`;
+}
+
+function getReturnUrlFromReferrer() {
+  try {
+    const ref = document.referrer ? new URL(document.referrer) : null;
+    if (!ref || ref.origin !== window.location.origin) return "";
+    const page = ref.pathname.split("/").pop() || "index.html";
+    return `${page}${ref.search}${ref.hash}`;
+  } catch {
+    return "";
+  }
+}
+
+function getLoginUrl() {
+  const current = getCurrentPagePath();
+  const next = current.includes("login.html") ? getReturnUrlFromReferrer() || "index.html" : current;
+  return `login.html?next=${encodeURIComponent(next)}`;
+}
+
+function guardCheckoutPage() {
+  if (!DISABLE_CHECKOUT) return false;
+  if (!/checkout\.html$/i.test(window.location.pathname)) return false;
+  window.location.href = "index.html";
+  return true;
 }
 
 function getCategoryPageHref(category) {
@@ -679,13 +710,10 @@ function renderAuthNav() {
     navLinks.appendChild(authLink);
   }
 
-  if (session) {
-    if (!adminLink.parentElement) {
-      navLinks.appendChild(adminLink);
-    }
-    adminLink.href = "admin-products.html";
+  if (adminLink.parentElement) adminLink.remove();
 
-    authLink.href = "login.html?next=checkout.html";
+  if (session) {
+    authLink.href = getLoginUrl();
     authLink.textContent = session.name ? `Hi, ${session.name}` : "My Account";
 
     if (!logoutBtn) {
@@ -697,8 +725,7 @@ function renderAuthNav() {
       navLinks.appendChild(logoutBtn);
     }
   } else {
-    if (adminLink.parentElement) adminLink.remove();
-    authLink.href = "login.html?next=checkout.html";
+    authLink.href = getLoginUrl();
     authLink.textContent = "Login";
     if (logoutBtn) logoutBtn.remove();
   }
@@ -837,6 +864,84 @@ function setupProductTools() {
 function getQuickInquiryUrl(item) {
   const text = `Hello Dhruv Dental Depot, I want details for ${item.title} (${item.category}).`;
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+}
+
+function showToast(message) {
+  if (!message) return;
+  let toast = document.querySelector(".toast");
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.className = "toast";
+    toast.setAttribute("role", "status");
+    toast.setAttribute("aria-live", "polite");
+    document.body.appendChild(toast);
+  }
+  toast.textContent = message;
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 2200);
+}
+
+function getConfirmModal() {
+  let modal = document.querySelector(".confirm-modal");
+  if (modal) return modal;
+
+  modal = document.createElement("div");
+  modal.className = "confirm-modal";
+  modal.setAttribute("aria-hidden", "true");
+  modal.innerHTML = `
+    <div class="confirm-backdrop" data-confirm-cancel="true"></div>
+    <div class="confirm-panel" role="dialog" aria-modal="true" aria-label="Confirm logout">
+      <h3 id="confirmTitle">Confirm Logout</h3>
+      <p id="confirmMessage"></p>
+      <div class="confirm-actions">
+        <button class="ghost" type="button" data-confirm-cancel="true">Cancel</button>
+        <button class="primary" type="button" data-confirm-yes="true">Yes, Logout</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  return modal;
+}
+
+function showConfirmLogout(message) {
+  const modal = getConfirmModal();
+  const messageEl = modal.querySelector("#confirmMessage");
+  const yesBtn = modal.querySelector("[data-confirm-yes]");
+  const cancelButtons = modal.querySelectorAll("[data-confirm-cancel]");
+
+  if (messageEl) messageEl.textContent = message;
+  modal.classList.add("open");
+  modal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+
+  return new Promise((resolve) => {
+    const cleanup = () => {
+      modal.classList.remove("open");
+      modal.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("modal-open");
+      yesBtn?.removeEventListener("click", onYes);
+      cancelButtons.forEach((btn) => btn.removeEventListener("click", onCancel));
+      document.removeEventListener("keydown", onKeydown);
+    };
+
+    const onYes = () => {
+      cleanup();
+      resolve(true);
+    };
+
+    const onCancel = () => {
+      cleanup();
+      resolve(false);
+    };
+
+    const onKeydown = (event) => {
+      if (event.key === "Escape") onCancel();
+    };
+
+    yesBtn?.addEventListener("click", onYes);
+    cancelButtons.forEach((btn) => btn.addEventListener("click", onCancel));
+    document.addEventListener("keydown", onKeydown);
+  });
 }
 
 let productDrawer = null;
@@ -1020,6 +1125,12 @@ function renderCartPage() {
   const totalCount = detailed.reduce((sum, line) => sum + line.qty, 0);
   if (cartTotalCount) cartTotalCount.textContent = String(totalCount);
   if (checkoutBtn) {
+    if (DISABLE_CHECKOUT) {
+      checkoutBtn.href = "#";
+      checkoutBtn.textContent = "Ordering Disabled";
+      checkoutBtn.setAttribute("aria-disabled", "true");
+      return;
+    }
     const loggedIn = Boolean(getSession());
     checkoutBtn.href = loggedIn ? "checkout.html" : "login.html?next=checkout.html";
     checkoutBtn.textContent = loggedIn ? "Proceed to Checkout" : "Login to Checkout";
@@ -1048,7 +1159,7 @@ async function requireAuthForCheckout() {
   if (getSession()) return true;
   const user = await refreshSessionFromServer();
   if (user) return true;
-  window.location.href = "login.html?next=checkout.html";
+  window.location.href = getLoginUrl();
   return false;
 }
 
@@ -1068,7 +1179,7 @@ function handleCheckoutSubmit() {
 
     const currentUser = (await refreshSessionFromServer()) || getSession();
     if (!currentUser) {
-      window.location.href = "login.html?next=checkout.html";
+      window.location.href = getLoginUrl();
       return;
     }
 
@@ -1119,8 +1230,20 @@ async function setupAuthPage() {
   const status = document.getElementById("authStatus");
   if (!form) return;
 
+  const passwordField = form.querySelector(".password-field input[name='password']");
+  const passwordToggle = form.querySelector(".password-toggle");
+  if (passwordField instanceof HTMLInputElement && passwordToggle instanceof HTMLButtonElement) {
+    passwordToggle.addEventListener("click", () => {
+      const isHidden = passwordField.type === "password";
+      passwordField.type = isHidden ? "text" : "password";
+      passwordToggle.textContent = isHidden ? "Hide" : "Show";
+      passwordToggle.setAttribute("aria-label", isHidden ? "Hide password" : "Show password");
+    });
+  }
+
   const params = new URLSearchParams(window.location.search);
-  const next = params.get("next") || "checkout.html";
+  const fallbackNext = getReturnUrlFromReferrer() || "index.html";
+  const next = params.get("next") || fallbackNext;
 
   const existing = (await refreshSessionFromServer()) || getSession();
   if (existing) {
@@ -1381,6 +1504,10 @@ function setupCartInteractions() {
     const target = event.target;
     if (!(target instanceof HTMLElement)) return;
     if (!target.closest("[data-logout-btn]")) return;
+    const session = getSession();
+    const name = session?.name ? ` ${session.name}` : "";
+    const ok = await showConfirmLogout(`Hi${name}, are you sure you want to logout?`);
+    if (!ok) return;
     try {
       await apiRequest("/auth/logout", { method: "POST" });
     } catch {
@@ -1389,8 +1516,9 @@ function setupCartInteractions() {
     clearSession();
     renderAuthNav();
     renderCartPage();
+    showToast("User logged out successfully.");
     if (document.body?.dataset?.requiresAuth === "true") {
-      window.location.href = "login.html?next=checkout.html";
+      window.location.href = "index.html";
     }
   });
 }
@@ -1509,6 +1637,8 @@ function setupPriceListForm() {
 
 async function bootstrap() {
   applyTheme(getStoredTheme());
+
+  if (guardCheckoutPage()) return;
 
   if (pageCategory !== "All" && filters) {
     filters.style.display = "none";

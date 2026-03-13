@@ -43,7 +43,10 @@
             <input required name="email" type="email" placeholder="you@example.com" />
           </label>
           <label>Password
-            <input required name="password" type="password" placeholder="Enter password" />
+            <span class="password-field">
+              <input required name="password" type="password" placeholder="Enter password" />
+              <button class="password-toggle" type="button" aria-label="Show password">Show</button>
+            </span>
           </label>
           <div class="auth-actions">
             <button class="primary" type="submit" name="action" value="login">Login</button>

@@ -470,10 +470,18 @@ body.dark-theme .card-media {
 
 /* Temporarily hide commerce/auth actions until backend rollout is complete. */
 .add-cart-btn,
-.cart-link,
-[data-auth-link],
-[data-logout-btn] {
+.cart-link {
   display: none !important;
+}
+
+/* Ensure login link is visible. */
+[data-auth-link] {
+  display: inline-flex !important;
+}
+
+/* Show logout when present. */
+[data-logout-btn] {
+  display: inline-flex !important;
 }
 
 .tag {
@@ -998,6 +1006,34 @@ body.dark-theme .checkout-form select {
   flex-wrap: wrap;
 }
 
+.password-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-field input {
+  flex: 1;
+  padding-right: 64px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  padding: 4px 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+body.dark-theme .password-toggle {
+  color: var(--ink);
+}
+
 [aria-disabled="true"] {
   pointer-events: none;
   opacity: 0.5;
@@ -1368,4 +1404,81 @@ body.lightbox-open {
 
 body.drawer-open {
   overflow: hidden;
+}
+
+.confirm-modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 70;
+}
+
+.confirm-modal.open {
+  display: flex;
+}
+
+.confirm-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(17, 20, 23, 0.55);
+  backdrop-filter: blur(2px);
+}
+
+.confirm-panel {
+  position: relative;
+  width: min(420px, 92vw);
+  background: var(--card);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 24px 60px var(--shadow);
+  z-index: 1;
+}
+
+.confirm-panel h3 {
+  margin: 0 0 8px;
+  font-family: "Fraunces", serif;
+}
+
+.confirm-panel p {
+  margin: 0 0 16px;
+  color: var(--slate);
+  line-height: 1.6;
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+body.modal-open {
+  overflow: hidden;
+}
+
+.toast {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  background: var(--ink);
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 12px;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.18);
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 60;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+body.dark-theme .toast {
+  background: #e7ecef;
+  color: #1a1d1f;
 }
