@@ -1296,7 +1296,14 @@ async function setupAuthPage() {
       if (data?.user) {
         saveSession(data.user);
       }
-      window.location.href = next;
+      if (action === "register") {
+        showToast("Account created successfully.");
+      } else {
+        showToast("Logged in successfully.");
+      }
+      setTimeout(() => {
+        window.location.href = next;
+      }, 900);
     } catch (error) {
       if (status) status.textContent = error.message || "Authentication failed.";
     }
