@@ -8,6 +8,8 @@ window.APP_CONFIG = {
       ? "http://localhost:4000"
       : location.hostname === "127.0.0.1"
         ? "http://127.0.0.1:4000"
+        : location.hostname === "192.168.0.108"
+        ? "http://192.168.0.108:4000"
         : "https://dhruvdentaldepotbackend-production.up.railway.app",
   SITE_URL: "https://ddent.co.in"
 };

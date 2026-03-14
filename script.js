@@ -401,6 +401,10 @@ const DISABLE_CHECKOUT = true;
 const THEME_KEY = "ddd_theme";
 const CONTACT_PHONE = "+919335485398";
 const WHATSAPP_NUMBER = "919335485398";
+const WISHLIST_KEY = "ddd_wishlist";
+const WISHLIST_PENDING_KEY = "ddd_wishlist_pending";
+let wishlistIds = null;
+let wishlistSyncWarned = false;
 
 let inventory = [...defaultInventory];
 let productMap = new Map(inventory.map((item) => [item.id, item]));
@@ -429,9 +433,7 @@ function setInventory(nextInventory) {
 }
 
 function getCurrentPagePath() {
-  const raw = window.location.pathname.split("/").pop() || "index.html";
-  const suffix = `${window.location.search || ""}${window.location.hash || ""}`;
-  return `${raw}${suffix}`;
+  return `${window.location.pathname}${window.location.search || ""}${window.location.hash || ""}`;
 }
 
 function getReturnUrlFromReferrer() {
@@ -449,6 +451,26 @@ function getLoginUrl() {
   const current = getCurrentPagePath();
   const next = current.includes("login.html") ? getReturnUrlFromReferrer() || "index.html" : current;
   return `login.html?next=${encodeURIComponent(next)}`;
+}
+
+function normalizeNextUrl(nextUrl) {
+  const fallback = "index.html";
+  if (!nextUrl) return fallback;
+
+  if (/^\/\//.test(nextUrl)) return fallback;
+
+  if (/^https?:\/\//i.test(nextUrl)) {
+    try {
+      const url = new URL(nextUrl);
+      if (url.origin !== window.location.origin) return fallback;
+      return `${url.pathname}${url.search}${url.hash}`;
+    } catch {
+      return fallback;
+    }
+  }
+
+  if (nextUrl.includes("login.html")) return fallback;
+  return nextUrl;
 }
 
 function guardCheckoutPage() {
@@ -681,6 +703,202 @@ function getCartCount() {
   return getCart().reduce((sum, item) => sum + item.qty, 0);
 }
 
+function getWishlist() {
+  return safeJsonParse(localStorage.getItem(WISHLIST_KEY), []);
+}
+
+function saveWishlist(nextList) {
+  localStorage.setItem(WISHLIST_KEY, JSON.stringify(nextList));
+}
+
+function getWishlistIds() {
+  if (!getSession()) return [];
+  if (Array.isArray(wishlistIds)) return wishlistIds;
+  return getWishlist();
+}
+
+function getWishlistCount() {
+  const session = getSession();
+  if (!session) return 0;
+  return getWishlistIds().length;
+}
+
+function setPendingWishlist(productId) {
+  const payload = { id: productId, returnUrl: getCurrentPagePath() };
+  localStorage.setItem(WISHLIST_PENDING_KEY, JSON.stringify(payload));
+}
+
+async function applyPendingWishlist() {
+  const session = getSession();
+  if (!session) return;
+  const pending = safeJsonParse(localStorage.getItem(WISHLIST_PENDING_KEY), null);
+  if (!pending?.id) return;
+  if (!isWishlisted(pending.id)) {
+    await addWishlistItem(pending.id, { silent: true });
+  }
+  localStorage.removeItem(WISHLIST_PENDING_KEY);
+}
+
+function isWishlisted(productId) {
+  const session = getSession();
+  if (!session) return false;
+  return getWishlistIds().includes(productId);
+}
+
+async function loadWishlistFromServer() {
+  if (!getSession()) {
+    wishlistIds = [];
+    return;
+  }
+  try {
+    const data = await apiRequest("/wishlist");
+    const items = Array.isArray(data?.items) ? data.items : [];
+    wishlistIds = items.map((item) => String(item.productId || item.product_id || item.id || ""));
+    wishlistIds = wishlistIds.filter(Boolean);
+    saveWishlist(wishlistIds);
+  } catch (error) {
+    if (!wishlistSyncWarned && error?.status === 404) {
+      wishlistSyncWarned = true;
+      showToast("Wishlist sync unavailable. Backend update needed.");
+    }
+    wishlistIds = getWishlist();
+  }
+}
+
+async function addWishlistItem(productId, { silent = false } = {}) {
+  if (!getSession()) return false;
+  try {
+    await apiRequest("/wishlist", {
+      method: "POST",
+      body: { productId }
+    });
+    if (!wishlistIds) wishlistIds = getWishlist();
+    if (!wishlistIds.includes(productId)) wishlistIds.push(productId);
+    saveWishlist(wishlistIds);
+    if (!silent) showToast("Added to wishlist.");
+    renderWishlistNav();
+    return true;
+  } catch {
+    if (!silent) showToast("Could not update wishlist.");
+    return false;
+  }
+}
+
+async function removeWishlistItem(productId, { silent = false } = {}) {
+  if (!getSession()) return false;
+  try {
+    await apiRequest(`/wishlist/${productId}`, { method: "DELETE" });
+    const nextList = getWishlistIds().filter((id) => id !== productId);
+    wishlistIds = nextList;
+    saveWishlist(nextList);
+    if (!silent) showToast("Removed from wishlist.");
+    renderWishlistNav();
+    return true;
+  } catch {
+    if (!silent) showToast("Could not update wishlist.");
+    return false;
+  }
+}
+
+async function toggleWishlist(productId) {
+  if (isWishlisted(productId)) {
+    return await removeWishlistItem(productId);
+  }
+  return await addWishlistItem(productId);
+}
+
+function getWishlistModal() {
+  let modal = document.querySelector(".wishlist-modal");
+  if (modal) return modal;
+
+  modal = document.createElement("div");
+  modal.className = "wishlist-modal";
+  modal.setAttribute("aria-hidden", "true");
+  modal.innerHTML = `
+    <div class="wishlist-backdrop" data-wishlist-close="true"></div>
+    <aside class="wishlist-panel" role="dialog" aria-modal="true" aria-label="Wishlist">
+      <div class="wishlist-header">
+        <h3>Wishlist</h3>
+        <button class="wishlist-close" type="button" data-wishlist-close="true" aria-label="Close wishlist">X</button>
+      </div>
+      <div class="wishlist-body"></div>
+    </aside>
+  `;
+  document.body.appendChild(modal);
+  return modal;
+}
+
+function renderWishlistModal() {
+  const modal = getWishlistModal();
+  const body = modal.querySelector(".wishlist-body");
+  if (!(body instanceof HTMLElement)) return;
+
+  const items = getWishlistIds()
+    .map((id) => productMap.get(id))
+    .filter(Boolean);
+
+  if (!items.length) {
+    body.innerHTML = `<div class="empty">No items in wishlist yet.</div>`;
+    return;
+  }
+
+  body.innerHTML = items
+    .map(
+      (item) => `
+      <article class="wishlist-item">
+        <img src="${item.image}" alt="${item.title}" />
+        <div>
+          <h4>${item.title}</h4>
+          <p>${item.category}</p>
+        </div>
+        <button class="ghost small" type="button" data-wishlist-remove="${item.id}">Remove</button>
+      </article>
+    `
+    )
+    .join("");
+}
+
+function openWishlistModal() {
+  const modal = getWishlistModal();
+  renderWishlistModal();
+  modal.classList.add("open");
+  modal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+}
+
+function closeWishlistModal() {
+  const modal = document.querySelector(".wishlist-modal");
+  if (!modal) return;
+  modal.classList.remove("open");
+  modal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("modal-open");
+}
+
+function renderWishlistNav() {
+  const navLinks = document.querySelector(".nav-links");
+  if (!navLinks) return;
+
+  const count = getWishlistCount();
+  let link = navLinks.querySelector("[data-wishlist-link]");
+
+  if (!count) {
+    if (link) link.remove();
+    return;
+  }
+
+  if (!link) {
+    link = document.createElement("button");
+    link.type = "button";
+    link.className = "nav-btn wishlist-link";
+    link.setAttribute("data-wishlist-link", "true");
+    link.innerHTML = `Wishlist <span class="wishlist-count" data-wishlist-count>0</span>`;
+    navLinks.appendChild(link);
+  }
+
+  const badge = link.querySelector("[data-wishlist-count]");
+  if (badge) badge.textContent = String(count);
+}
+
 function updateCartBadge() {
   const count = getCartCount();
   document.querySelectorAll("[data-cart-count]").forEach((badge) => {
@@ -729,6 +947,8 @@ function renderAuthNav() {
     authLink.textContent = "Login";
     if (logoutBtn) logoutBtn.remove();
   }
+
+  renderWishlistNav();
 }
 
 function setupMobileNavMenu() {
@@ -963,8 +1183,9 @@ function getProductDrawer() {
   drawer.addEventListener("click", (event) => {
     const target = event.target;
     if (!(target instanceof HTMLElement)) return;
-    if (!target.closest("[data-drawer-close]")) return;
-    closeProductDrawer();
+    if (target.closest(".product-drawer-backdrop") || target.closest(".product-drawer-close")) {
+      closeProductDrawer();
+    }
   });
 
   document.addEventListener("keydown", (event) => {
@@ -986,6 +1207,9 @@ function openProductDrawer(productId) {
 
   const fitClass = product.fit === "contain" ? "fit-contain" : "";
   const noteHtml = product.note ? `<p class="product-drawer-note">${product.note}</p>` : "";
+  const wishlisted = isWishlisted(productId);
+  const wishlistLabel = wishlisted ? "Wishlisted" : "Add to Wishlist";
+  const wishlistState = wishlisted ? " active" : "";
   content.innerHTML = `
     <div class="product-drawer-media">
       <img src="${product.image}" alt="${product.title}" class="${fitClass}" />
@@ -1003,6 +1227,10 @@ function openProductDrawer(productId) {
       <p class="product-drawer-copy">For pricing, stock status, and compatibility details, contact us directly.</p>
       <div class="product-drawer-actions">
         <a class="primary" href="${getQuickInquiryUrl(product)}" target="_blank" rel="noopener noreferrer">Quick Inquiry</a>
+        <button class="ghost wishlist-btn${wishlistState}" data-wishlist-id="${productId}" type="button">
+          <span class="wishlist-icon" aria-hidden="true">♡</span>
+          <span class="wishlist-text">${wishlistLabel}</span>
+        </button>
       </div>
     </div>
   `;
@@ -1243,7 +1471,7 @@ async function setupAuthPage() {
 
   const params = new URLSearchParams(window.location.search);
   const fallbackNext = getReturnUrlFromReferrer() || "index.html";
-  const next = params.get("next") || fallbackNext;
+  const next = normalizeNextUrl(params.get("next") || fallbackNext);
 
   const existing = (await refreshSessionFromServer()) || getSession();
   if (existing) {
@@ -1301,6 +1529,9 @@ async function setupAuthPage() {
       } else {
         showToast("Logged in successfully.");
       }
+      await loadWishlistFromServer();
+      await applyPendingWishlist();
+      renderWishlistNav();
       setTimeout(() => {
         window.location.href = next;
       }, 900);
@@ -1510,6 +1741,48 @@ function setupCartInteractions() {
   document.addEventListener("click", async (event) => {
     const target = event.target;
     if (!(target instanceof HTMLElement)) return;
+
+    const wishlistLink = target.closest("[data-wishlist-link]");
+    if (wishlistLink) {
+      openWishlistModal();
+      return;
+    }
+
+    const wishlistClose = target.closest("[data-wishlist-close]");
+    if (wishlistClose) {
+      closeWishlistModal();
+      return;
+    }
+
+    const wishlistRemove = target.closest("[data-wishlist-remove]");
+    if (wishlistRemove instanceof HTMLElement) {
+      const id = wishlistRemove.getAttribute("data-wishlist-remove");
+      if (!id) return;
+      await removeWishlistItem(id);
+      renderWishlistModal();
+      if (!getWishlistCount()) closeWishlistModal();
+      return;
+    }
+    const wishlistBtn = target.closest("[data-wishlist-id]");
+    if (wishlistBtn instanceof HTMLElement) {
+      event.preventDefault();
+      event.stopPropagation();
+      const session = getSession();
+      if (!session) {
+        const id = wishlistBtn.getAttribute("data-wishlist-id");
+        if (id) setPendingWishlist(id);
+        window.location.href = getLoginUrl();
+        return;
+      }
+      const id = wishlistBtn.getAttribute("data-wishlist-id");
+      if (!id) return;
+      const nowWishlisted = await toggleWishlist(id);
+      const textEl = wishlistBtn.querySelector(".wishlist-text");
+      if (textEl) textEl.textContent = nowWishlisted ? "Wishlisted" : "Add to Wishlist";
+      wishlistBtn.classList.toggle("active", nowWishlisted);
+      openProductDrawer(id);
+      return;
+    }
     if (!target.closest("[data-logout-btn]")) return;
     const session = getSession();
     const name = session?.name ? ` ${session.name}` : "";
@@ -1521,6 +1794,8 @@ function setupCartInteractions() {
       // Ignore and clear local session anyway.
     }
     clearSession();
+    wishlistIds = null;
+    saveWishlist([]);
     renderAuthNav();
     renderCartPage();
     showToast("User logged out successfully.");
@@ -1660,6 +1935,14 @@ async function bootstrap() {
   renderFilters();
   setupBreadcrumbs();
   renderCards(pageCategory);
+  const session = await refreshSessionFromServer();
+  if (session) {
+    await loadWishlistFromServer();
+    await applyPendingWishlist();
+  } else {
+    wishlistIds = [];
+  }
+  renderWishlistNav();
   renderCartPage();
   renderCheckoutSummary();
   setupCartInteractions();
@@ -1675,8 +1958,7 @@ async function bootstrap() {
   setupStickyContactBar();
   setupPriceListForm();
 
-  const user = await refreshSessionFromServer();
-  if (user) {
+  if (session) {
     renderAuthNav();
     renderCartPage();
   }
