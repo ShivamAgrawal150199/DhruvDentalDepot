@@ -1291,9 +1291,13 @@ async function openUserDrawer(anchor) {
       <h3>Hi, ${name}</h3>
       <p>Manage your account options below.</p>
       <div class="user-drawer-actions">
-        <button class="nav-btn wishlist-link" type="button" data-wishlist-link="true">
-          Wishlist <span class="wishlist-count" data-wishlist-count>${count}</span>
-        </button>
+        ${
+          count
+            ? `<button class="nav-btn wishlist-link" type="button" data-wishlist-link="true">
+                Wishlist <span class="wishlist-count" data-wishlist-count>${count}</span>
+              </button>`
+            : ""
+        }
         <button class="primary" type="button" data-logout-btn="true">Logout</button>
       </div>
     `;

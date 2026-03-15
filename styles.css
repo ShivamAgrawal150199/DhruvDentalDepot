@@ -1095,6 +1095,20 @@ body.dark-theme .checkout-form select {
   font-weight: 600;
 }
 
+.google-icon {
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.google-icon svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
 .password-field {
   position: relative;
   display: flex;
