@@ -931,7 +931,14 @@ function renderAuthNav() {
     authLink.href = getLoginUrl();
     authLink.textContent = "Login";
     if (logoutBtn) logoutBtn.remove();
-    if (!authLink.parentElement) navLinks.appendChild(authLink);
+    if (!authLink.parentElement) {
+      const themeToggle = navLinks.querySelector("[data-theme-toggle]");
+      if (themeToggle) {
+        navLinks.insertBefore(authLink, themeToggle);
+      } else {
+        navLinks.appendChild(authLink);
+      }
+    }
   }
 
   renderWishlistNav();
@@ -1590,6 +1597,10 @@ async function setupAuthPage() {
   const params = new URLSearchParams(window.location.search);
   const fallbackNext = getReturnUrlFromReferrer() || "index.html";
   const next = normalizeNextUrl(params.get("next") || fallbackNext);
+  const googleBtn = document.getElementById("googleLoginBtn");
+  if (googleBtn instanceof HTMLAnchorElement) {
+    googleBtn.href = `${API_BASE}/auth/google?next=${encodeURIComponent(next)}`;
+  }
 
   const existing = (await refreshSessionFromServer()) || getSession();
   if (existing) {
