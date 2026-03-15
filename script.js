@@ -876,27 +876,21 @@ function closeWishlistModal() {
 
 function renderWishlistNav() {
   const navLinks = document.querySelector(".nav-links");
-  if (!navLinks) return;
-
+  const session = getSession();
   const count = getWishlistCount();
-  let link = navLinks.querySelector("[data-wishlist-link]");
-
-  if (!count) {
+  if (navLinks) {
+    const link = navLinks.querySelector("[data-wishlist-link]");
     if (link) link.remove();
+  }
+  if (!session) {
+    document.querySelectorAll("[data-wishlist-count]").forEach((badge) => {
+      badge.textContent = "0";
+    });
     return;
   }
-
-  if (!link) {
-    link = document.createElement("button");
-    link.type = "button";
-    link.className = "nav-btn wishlist-link";
-    link.setAttribute("data-wishlist-link", "true");
-    link.innerHTML = `Wishlist <span class="wishlist-count" data-wishlist-count>0</span>`;
-    navLinks.appendChild(link);
-  }
-
-  const badge = link.querySelector("[data-wishlist-count]");
-  if (badge) badge.textContent = String(count);
+  document.querySelectorAll("[data-wishlist-count]").forEach((badgeEl) => {
+    badgeEl.textContent = String(count);
+  });
 }
 
 function updateCartBadge() {
@@ -931,24 +925,17 @@ function renderAuthNav() {
   if (adminLink.parentElement) adminLink.remove();
 
   if (session) {
-    authLink.href = getLoginUrl();
-    authLink.textContent = session.name ? `Hi, ${session.name}` : "My Account";
-
-    if (!logoutBtn) {
-      logoutBtn = document.createElement("button");
-      logoutBtn.type = "button";
-      logoutBtn.className = "nav-btn";
-      logoutBtn.setAttribute("data-logout-btn", "true");
-      logoutBtn.textContent = "Logout";
-      navLinks.appendChild(logoutBtn);
-    }
+    if (authLink.parentElement) authLink.remove();
+    if (logoutBtn) logoutBtn.remove();
   } else {
     authLink.href = getLoginUrl();
     authLink.textContent = "Login";
     if (logoutBtn) logoutBtn.remove();
+    if (!authLink.parentElement) navLinks.appendChild(authLink);
   }
 
   renderWishlistNav();
+  renderUserIcon();
 }
 
 function setupMobileNavMenu() {
@@ -1165,6 +1152,9 @@ function showConfirmLogout(message) {
 }
 
 let productDrawer = null;
+let drawerLockUntil = 0;
+let userDrawer = null;
+let userDrawerAnchor = null;
 
 function getProductDrawer() {
   if (productDrawer) return productDrawer;
@@ -1243,10 +1233,138 @@ function openProductDrawer(productId) {
 }
 
 function closeProductDrawer() {
+  if (Date.now() < drawerLockUntil) return;
   if (!productDrawer) return;
   productDrawer.classList.remove("open");
   productDrawer.setAttribute("aria-hidden", "true");
   document.body.classList.remove("drawer-open");
+}
+
+function getUserDrawer() {
+  if (userDrawer) return userDrawer;
+
+  const drawer = document.createElement("div");
+  drawer.className = "user-drawer";
+  drawer.setAttribute("aria-hidden", "true");
+  drawer.innerHTML = `
+    <div class="user-drawer-backdrop" data-user-drawer-close="true"></div>
+    <aside class="user-drawer-panel" role="dialog" aria-modal="true" aria-label="Account">
+      <div class="user-drawer-handle" aria-hidden="true"></div>
+      <button class="user-drawer-close" type="button" data-user-drawer-close="true" aria-label="Close account">X</button>
+      <div class="user-drawer-content"></div>
+    </aside>
+  `;
+
+  document.body.appendChild(drawer);
+  userDrawer = drawer;
+  window.addEventListener("resize", positionUserDrawer);
+  window.addEventListener("scroll", positionUserDrawer, true);
+  return drawer;
+}
+
+async function openUserDrawer(anchor) {
+  let session = getSession();
+  if (!session) {
+    session = await refreshSessionFromServer();
+  }
+  if (!session) {
+    showToast("Please login to view account options.");
+    window.location.href = getLoginUrl();
+    return;
+  }
+  const drawer = getUserDrawer();
+  if (anchor instanceof HTMLElement) {
+    userDrawerAnchor = anchor;
+  }
+  const content = drawer.querySelector(".user-drawer-content");
+  if (content instanceof HTMLElement) {
+    const name = session.name || "there";
+    const count = getWishlistCount();
+    content.innerHTML = `
+      <h3>Hi, ${name}</h3>
+      <p>Manage your account options below.</p>
+      <div class="user-drawer-actions">
+        <button class="nav-btn wishlist-link" type="button" data-wishlist-link="true">
+          Wishlist <span class="wishlist-count" data-wishlist-count>${count}</span>
+        </button>
+        <button class="primary" type="button" data-logout-btn="true">Logout</button>
+      </div>
+    `;
+  }
+  renderWishlistNav();
+  positionUserDrawer();
+  drawer.classList.add("open");
+  drawer.setAttribute("aria-hidden", "false");
+  document.body.classList.add("user-drawer-open");
+}
+
+function closeUserDrawer() {
+  if (!userDrawer) return;
+  userDrawer.classList.remove("open");
+  userDrawer.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("user-drawer-open");
+}
+
+function positionUserDrawer() {
+  if (!userDrawer || !userDrawerAnchor) return;
+  const panel = userDrawer.querySelector(".user-drawer-panel");
+  if (!(panel instanceof HTMLElement)) return;
+  const rect = userDrawerAnchor.getBoundingClientRect();
+  const panelWidth = Math.min(280, window.innerWidth - 24);
+  const panelHeight = panel.offsetHeight || 160;
+  const spacing = 10;
+  const top = Math.min(
+    window.innerHeight - panelHeight - spacing,
+    rect.bottom + spacing
+  );
+  const left = Math.max(
+    12,
+    Math.min(window.innerWidth - panelWidth - 12, rect.right - panelWidth)
+  );
+  panel.style.width = `${panelWidth}px`;
+  panel.style.top = `${Math.max(spacing, top)}px`;
+  panel.style.left = `${left}px`;
+}
+
+function renderUserIcon() {
+  const topNav = document.querySelector(".top-nav");
+  const navLinks = topNav?.querySelector(".nav-links");
+  if (!topNav || !navLinks) return;
+
+  const session = getSession();
+  let btn = topNav.querySelector("[data-user-drawer-btn]");
+
+  if (!session) {
+    if (btn) btn.remove();
+    return;
+  }
+
+  if (!btn) {
+    btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "user-icon-btn";
+    btn.setAttribute("data-user-drawer-btn", "true");
+    btn.setAttribute("aria-label", "Open account options");
+    btn.innerHTML = `
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M12 12c2.49 0 4.5-2.01 4.5-4.5S14.49 3 12 3 7.5 5.01 7.5 7.5 9.51 12 12 12zm0 2.25c-3 0-9 1.5-9 4.5v1.5h18v-1.5c0-3-6-4.5-9-4.5z"/>
+      </svg>
+    `;
+  }
+  if (btn.dataset.bound !== "true") {
+    btn.dataset.bound = "true";
+    btn.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      openUserDrawer(btn);
+    });
+  }
+
+  const navToggle = topNav.querySelector(".nav-toggle");
+  const anchor = navToggle || navLinks;
+  if (btn.parentElement !== topNav || btn.nextElementSibling !== anchor) {
+    topNav.insertBefore(btn, anchor);
+  }
 }
 
 function renderCards(category) {
@@ -1742,8 +1860,21 @@ function setupCartInteractions() {
     const target = event.target;
     if (!(target instanceof HTMLElement)) return;
 
+    const userDrawerBtn = target.closest("[data-user-drawer-btn]");
+    if (userDrawerBtn) {
+      openUserDrawer();
+      return;
+    }
+
+    const userDrawerClose = target.closest("[data-user-drawer-close]");
+    if (userDrawerClose) {
+      closeUserDrawer();
+      return;
+    }
+
     const wishlistLink = target.closest("[data-wishlist-link]");
     if (wishlistLink) {
+      closeUserDrawer();
       openWishlistModal();
       return;
     }
@@ -1780,10 +1911,12 @@ function setupCartInteractions() {
       const textEl = wishlistBtn.querySelector(".wishlist-text");
       if (textEl) textEl.textContent = nowWishlisted ? "Wishlisted" : "Add to Wishlist";
       wishlistBtn.classList.toggle("active", nowWishlisted);
+      drawerLockUntil = Date.now() + 500;
       openProductDrawer(id);
       return;
     }
     if (!target.closest("[data-logout-btn]")) return;
+    closeUserDrawer();
     const session = getSession();
     const name = session?.name ? ` ${session.name}` : "";
     const ok = await showConfirmLogout(`Hi${name}, are you sure you want to logout?`);
@@ -1796,6 +1929,7 @@ function setupCartInteractions() {
     clearSession();
     wishlistIds = null;
     saveWishlist([]);
+    closeUserDrawer();
     renderAuthNav();
     renderCartPage();
     showToast("User logged out successfully.");
