@@ -1037,6 +1037,12 @@ body.dark-theme .qty-group button {
   color: var(--ink);
 }
 
+.checkout-form input[readonly] {
+  background: var(--mist);
+  color: var(--slate);
+  cursor: not-allowed;
+}
+
 body.dark-theme .checkout-form input,
 body.dark-theme .checkout-form textarea,
 body.dark-theme .checkout-form select {
@@ -1624,6 +1630,15 @@ body.drawer-open {
   width: auto;
   padding: 6px 12px;
   font-size: 0.9rem;
+}
+
+.user-drawer-content .profile-link {
+  justify-self: flex-start;
+  width: auto;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
 }
 
 .user-drawer-content .wishlist-count {

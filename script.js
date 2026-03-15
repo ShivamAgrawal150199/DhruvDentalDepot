@@ -1290,6 +1290,7 @@ async function openUserDrawer(anchor) {
     content.innerHTML = `
       <h3>Hi, ${name}</h3>
       <p>Manage your account options below.</p>
+      <a class="ghost profile-link" href="profile.html">Profile</a>
       <div class="user-drawer-actions">
         ${
           count
@@ -1670,6 +1671,47 @@ async function setupAuthPage() {
       }, 900);
     } catch (error) {
       if (status) status.textContent = error.message || "Authentication failed.";
+    }
+  });
+}
+
+async function setupProfilePage() {
+  const form = document.getElementById("profileForm");
+  const status = document.getElementById("profileStatus");
+  if (!form) return;
+
+  let session = (await refreshSessionFromServer()) || getSession();
+  if (!session) {
+    window.location.href = getLoginUrl();
+    return;
+  }
+
+  const nameInput = form.querySelector("input[name='name']");
+  const emailInput = form.querySelector("input[name='email']");
+  if (nameInput instanceof HTMLInputElement) nameInput.value = session.name || "";
+  if (emailInput instanceof HTMLInputElement) emailInput.value = session.email || "";
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const nextName = nameInput instanceof HTMLInputElement ? nameInput.value.trim() : "";
+    if (!nextName) {
+      if (status) status.textContent = "Name is required.";
+      return;
+    }
+
+    try {
+      const data = await apiRequest("/auth/profile", {
+        method: "PUT",
+        body: { name: nextName }
+      });
+      if (data?.user) {
+        saveSession(data.user);
+        renderAuthNav();
+      }
+      if (status) status.textContent = "Profile updated successfully.";
+      showToast("Profile updated.");
+    } catch (error) {
+      if (status) status.textContent = error.message || "Could not update profile.";
     }
   });
 }
@@ -2097,6 +2139,7 @@ async function bootstrap() {
   setupCartInteractions();
   handleCheckoutSubmit();
   await setupAuthPage();
+  await setupProfilePage();
   await setupAdminPage();
   updateCartBadge();
   renderAuthNav();
