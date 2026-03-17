@@ -1730,6 +1730,29 @@ body.user-drawer-open {
   background: #fff;
 }
 
+.wishlist-remove-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid var(--muted-border);
+  background: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--ink);
+}
+
+.wishlist-remove-btn img {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+body.dark-theme .wishlist-remove-btn {
+  background: #2a343d;
+}
+
 .wishlist-item h4 {
   margin: 0 0 4px;
 }

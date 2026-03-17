@@ -81,7 +81,7 @@
     note: ""
   },
   {
-    title: "New 04",
+    title: "Foot Control",
     category: "Accessories",
     image: "images/new4.png",
     note: ""
@@ -93,13 +93,13 @@
     note: ""
   },
   {
-    title: "New 06",
+    title: "Bur Wrench",
     category: "Accessories",
     image: "images/new6.jpeg",
     note: ""
   },
   {
-    title: "New 07",
+    title: "Transformer",
     category: "Accessories",
     image: "images/new7.png",
     note: ""
@@ -851,7 +851,9 @@ function renderWishlistModal() {
           <h4>${item.title}</h4>
           <p>${item.category}</p>
         </div>
-        <button class="ghost small" type="button" data-wishlist-remove="${item.id}">Remove</button>
+        <button class="wishlist-remove-btn" type="button" data-wishlist-remove="${item.id}" aria-label="Remove from wishlist">
+          <img src="images/delete.png" alt="" aria-hidden="true" />
+        </button>
       </article>
     `
     )
@@ -1286,9 +1288,11 @@ async function openUserDrawer(anchor) {
   const content = drawer.querySelector(".user-drawer-content");
   if (content instanceof HTMLElement) {
     const name = session.name || "there";
+    const isDentist = String(session.profession || "").toLowerCase() === "dentist";
+    const greetingName = isDentist ? `Dr. ${name}` : name;
     const count = getWishlistCount();
     content.innerHTML = `
-      <h3>Hi, ${name}</h3>
+      <h3>Hi, ${greetingName}</h3>
       <p>Manage your account options below.</p>
       <a class="ghost profile-link" href="profile.html">Profile</a>
       <div class="user-drawer-actions">
@@ -1690,19 +1694,30 @@ async function setupProfilePage() {
   const emailInput = form.querySelector("input[name='email']");
   if (nameInput instanceof HTMLInputElement) nameInput.value = session.name || "";
   if (emailInput instanceof HTMLInputElement) emailInput.value = session.email || "";
+  const professionInput = form.querySelector("select[name='profession']");
+  if (professionInput instanceof HTMLSelectElement) {
+    professionInput.value = (session.profession || "").toLowerCase();
+  }
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const nextName = nameInput instanceof HTMLInputElement ? nameInput.value.trim() : "";
+    const nextProfession = professionInput instanceof HTMLSelectElement
+      ? professionInput.value.trim()
+      : "";
     if (!nextName) {
       if (status) status.textContent = "Name is required.";
+      return;
+    }
+    if (!nextProfession) {
+      if (status) status.textContent = "Profession is required.";
       return;
     }
 
     try {
       const data = await apiRequest("/auth/profile", {
         method: "PUT",
-        body: { name: nextName }
+        body: { name: nextName, profession: nextProfession }
       });
       if (data?.user) {
         saveSession(data.user);

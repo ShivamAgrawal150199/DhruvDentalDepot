@@ -1,9 +1,9 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Dhruv Dental Depot — Profile</title>
+    <title>Dhruv Dental Depot - Profile</title>
     <link rel="icon" href="favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" href="favicon-48x48.png" sizes="48x48" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png" />
@@ -28,7 +28,7 @@
       <div class="hero-inner">
         <p class="eyebrow">Account</p>
         <h1>Profile Settings</h1>
-        <p class="subhead">Update your name. Email is read-only.</p>
+        <p class="subhead">Update your name and profession. Email is read-only.</p>
       </div>
     </header>
 
@@ -41,6 +41,15 @@
           </label>
           <label>Email
             <input name="email" type="email" readonly />
+          </label>
+          <label>Profession
+            <select name="profession" required>
+              <option value="">Select profession</option>
+              <option value="dentist">Dentist</option>
+              <option value="dealer">Dealer</option>
+              <option value="student">Student</option>
+              <option value="universities supplier">Universities Supplier</option>
+            </select>
           </label>
           <div class="auth-actions">
             <button class="primary" type="submit">Save Changes</button>
@@ -59,3 +68,4 @@
     <script src="script.js"></script>
   </body>
 </html>
+
