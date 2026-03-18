@@ -1067,6 +1067,19 @@ body.dark-theme .checkout-form select {
   font-weight: 600;
 }
 
+.field-error {
+  display: block;
+  margin-top: 6px;
+  color: #c0392b;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.field-error:empty {
+  display: none;
+  margin-top: 0;
+}
+
 .auth-actions {
   display: flex;
   gap: 10px;

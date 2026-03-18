@@ -1692,8 +1692,13 @@ async function setupProfilePage() {
 
   const nameInput = form.querySelector("input[name='name']");
   const emailInput = form.querySelector("input[name='email']");
+  const phoneInput = form.querySelector("input[name='phone']");
+  const cityInput = form.querySelector("input[name='city']");
+  const phoneError = document.getElementById("phoneError");
   if (nameInput instanceof HTMLInputElement) nameInput.value = session.name || "";
   if (emailInput instanceof HTMLInputElement) emailInput.value = session.email || "";
+  if (phoneInput instanceof HTMLInputElement) phoneInput.value = session.phone || "";
+  if (cityInput instanceof HTMLInputElement) cityInput.value = session.city || "";
   const professionInput = form.querySelector("select[name='profession']");
   if (professionInput instanceof HTMLSelectElement) {
     professionInput.value = (session.profession || "").toLowerCase();
@@ -1702,11 +1707,33 @@ async function setupProfilePage() {
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const nextName = nameInput instanceof HTMLInputElement ? nameInput.value.trim() : "";
+    const nextPhone = phoneInput instanceof HTMLInputElement ? phoneInput.value.trim() : "";
+    const nextCity = cityInput instanceof HTMLInputElement ? cityInput.value.trim() : "";
     const nextProfession = professionInput instanceof HTMLSelectElement
       ? professionInput.value.trim()
       : "";
     if (!nextName) {
       if (status) status.textContent = "Name is required.";
+      return;
+    }
+    if (!nextPhone) {
+      if (phoneError) phoneError.textContent = "Phone number is required.";
+      return;
+    }
+    if (phoneError) phoneError.textContent = "";
+    const phoneDigits = nextPhone.replace(/\D/g, "");
+    let normalizedPhone = "";
+    if (phoneDigits.length === 10) {
+      normalizedPhone = phoneDigits;
+    } else if (phoneDigits.length === 12 && phoneDigits.startsWith("91")) {
+      normalizedPhone = phoneDigits.slice(2);
+    }
+    if (!normalizedPhone) {
+      if (phoneError) phoneError.textContent = "Enter a valid 10-digit Indian phone number.";
+      return;
+    }
+    if (!nextCity) {
+      if (status) status.textContent = "City is required.";
       return;
     }
     if (!nextProfession) {
@@ -1717,7 +1744,7 @@ async function setupProfilePage() {
     try {
       const data = await apiRequest("/auth/profile", {
         method: "PUT",
-        body: { name: nextName, profession: nextProfession }
+        body: { name: nextName, phone: normalizedPhone, city: nextCity, profession: nextProfession }
       });
       if (data?.user) {
         saveSession(data.user);
@@ -1726,7 +1753,11 @@ async function setupProfilePage() {
       if (status) status.textContent = "Profile updated successfully.";
       showToast("Profile updated.");
     } catch (error) {
-      if (status) status.textContent = error.message || "Could not update profile.";
+      if (error.status === 409 && phoneError) {
+        phoneError.textContent = "Phone number is already registered.";
+      } else if (error.message && status) {
+        status.textContent = error.message || "Could not update profile.";
+      }
     }
   });
 }
