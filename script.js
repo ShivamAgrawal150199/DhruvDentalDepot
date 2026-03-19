@@ -771,7 +771,7 @@ async function loadWishlistFromServer() {
   } catch (error) {
     if (!wishlistSyncWarned && error?.status === 404) {
       wishlistSyncWarned = true;
-      showToast("Wishlist sync unavailable. Backend update needed.");
+      showToast("Wishlist sync unavailable. Backend update needed.", { type: "error" });
     }
     wishlistIds = getWishlist();
   }
@@ -787,11 +787,11 @@ async function addWishlistItem(productId, { silent = false } = {}) {
     if (!wishlistIds) wishlistIds = getWishlist();
     if (!wishlistIds.includes(productId)) wishlistIds.push(productId);
     saveWishlist(wishlistIds);
-    if (!silent) showToast("Added to wishlist.");
+    if (!silent) showToast("Added to wishlist.", { type: "success" });
     renderWishlistNav();
     return true;
   } catch {
-    if (!silent) showToast("Could not update wishlist.");
+    if (!silent) showToast("Could not update wishlist.", { type: "error" });
     return false;
   }
 }
@@ -803,11 +803,11 @@ async function removeWishlistItem(productId, { silent = false } = {}) {
     const nextList = getWishlistIds().filter((id) => id !== productId);
     wishlistIds = nextList;
     saveWishlist(nextList);
-    if (!silent) showToast("Removed from wishlist.");
+    if (!silent) showToast("Removed from wishlist.", { type: "success" });
     renderWishlistNav();
     return true;
   } catch {
-    if (!silent) showToast("Could not update wishlist.");
+    if (!silent) showToast("Could not update wishlist.", { type: "error" });
     return false;
   }
 }
@@ -1094,19 +1094,54 @@ function getQuickInquiryUrl(item) {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
 }
 
-function showToast(message) {
-  if (!message) return;
-  let toast = document.querySelector(".toast");
-  if (!toast) {
-    toast = document.createElement("div");
-    toast.className = "toast";
-    toast.setAttribute("role", "status");
-    toast.setAttribute("aria-live", "polite");
-    document.body.appendChild(toast);
+function getToastStack() {
+  let stack = document.querySelector(".toast-stack");
+  if (!stack) {
+    stack = document.createElement("div");
+    stack.className = "toast-stack";
+    stack.setAttribute("aria-live", "polite");
+    stack.setAttribute("aria-atomic", "false");
+    document.body.appendChild(stack);
   }
-  toast.textContent = message;
-  toast.classList.add("show");
-  setTimeout(() => toast.classList.remove("show"), 2200);
+  return stack;
+}
+
+function showToast(message, options = {}) {
+  if (!message) return;
+  const { type = "info", duration = 2600 } = options;
+  const stack = getToastStack();
+  const toast = document.createElement("div");
+  toast.className = `toast toast--${type}`;
+  toast.setAttribute("role", "status");
+  toast.innerHTML = `
+    <span class="toast__text"></span>
+    <button class="toast__close" type="button" aria-label="Dismiss notification">×</button>
+  `;
+  const textEl = toast.querySelector(".toast__text");
+  if (textEl) textEl.textContent = message;
+
+  const removeToast = () => {
+    toast.classList.remove("show");
+    toast.addEventListener(
+      "transitionend",
+      () => {
+        toast.remove();
+      },
+      { once: true }
+    );
+  };
+
+  const closeBtn = toast.querySelector(".toast__close");
+  if (closeBtn instanceof HTMLButtonElement) {
+    closeBtn.addEventListener("click", removeToast);
+  }
+
+  stack.appendChild(toast);
+  requestAnimationFrame(() => toast.classList.add("show"));
+
+  if (duration > 0) {
+    setTimeout(removeToast, duration);
+  }
 }
 
 function getConfirmModal() {
@@ -1289,7 +1324,7 @@ async function openUserDrawer(anchor) {
     session = await refreshSessionFromServer();
   }
   if (!session) {
-    showToast("Please login to view account options.");
+    showToast("Please login to view account options.", { type: "info" });
     window.location.href = getLoginUrl();
     return;
   }
@@ -1678,9 +1713,9 @@ async function setupAuthPage() {
         saveSession(data.user);
       }
       if (action === "register") {
-        showToast("Account created successfully.");
+        showToast("Account created successfully.", { type: "success" });
       } else {
-        showToast("Logged in successfully.");
+        showToast("Logged in successfully.", { type: "success" });
       }
       await loadWishlistFromServer();
       await applyPendingWishlist();
@@ -1695,6 +1730,12 @@ async function setupAuthPage() {
             ? "Server unavailable. Please try again in a moment."
             : error.message || "Authentication failed.";
       }
+      showToast(
+        error.isNetwork
+          ? "Server unavailable. Please try again in a moment."
+          : error.message || "Authentication failed.",
+        { type: "error" }
+      );
     }
   });
 }
@@ -1771,7 +1812,7 @@ async function setupProfilePage() {
         renderAuthNav();
       }
       if (status) status.textContent = "Profile updated successfully.";
-      showToast("Profile updated.");
+      showToast("Profile updated.", { type: "success" });
     } catch (error) {
       if (error.status === 409 && phoneError) {
         phoneError.textContent = "Phone number is already registered.";
@@ -1780,6 +1821,14 @@ async function setupProfilePage() {
           error.isNetwork
             ? "Server unavailable. Please try again in a moment."
             : error.message || "Could not update profile.";
+      }
+      if (error.status !== 409) {
+        showToast(
+          error.isNetwork
+            ? "Server unavailable. Please try again in a moment."
+            : error.message || "Could not update profile.",
+          { type: "error" }
+        );
       }
     }
   });
@@ -2169,7 +2218,6 @@ function setupCartInteractions() {
       renderWishlistModal();
       const accountWishlist = document.querySelector("[data-account-section='wishlist']");
       if (accountWishlist) renderAccountWishlist(accountWishlist);
-      if (!getWishlistCount()) closeWishlistModal();
       return;
     }
     const wishlistBtn = target.closest("[data-wishlist-id]");
@@ -2210,7 +2258,7 @@ function setupCartInteractions() {
     closeUserDrawer();
     renderAuthNav();
     renderCartPage();
-    showToast("User logged out successfully.");
+    showToast("User logged out successfully.", { type: "success" });
     if (document.body?.dataset?.requiresAuth === "true") {
       window.location.href = "index.html";
     }
