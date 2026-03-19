@@ -38,7 +38,7 @@
     fit: "contain"
   },
   {
-    title: "Instrument 07",
+    title: "Mandrel",
     category: "Accessories",
     image: "images/ChatGPT Image Feb 8, 2026, 12_43_30 AM.png",
     note: "",
@@ -405,6 +405,7 @@ const WISHLIST_KEY = "ddd_wishlist";
 const WISHLIST_PENDING_KEY = "ddd_wishlist_pending";
 let wishlistIds = null;
 let wishlistSyncWarned = false;
+let backendDownNotified = false;
 
 let inventory = [...defaultInventory];
 let productMap = new Map(inventory.map((item) => [item.id, item]));
@@ -610,15 +611,23 @@ function setupThemeToggle() {
 }
 
 async function apiRequest(path, options = {}) {
-  const response = await fetch(`${API_BASE}${path}`, {
-    method: options.method || "GET",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {})
-    },
-    body: options.body ? JSON.stringify(options.body) : undefined
-  });
+  let response;
+  try {
+    response = await fetch(`${API_BASE}${path}`, {
+      method: options.method || "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        ...(options.headers || {})
+      },
+      body: options.body ? JSON.stringify(options.body) : undefined
+    });
+  } catch (_error) {
+    const error = new Error("Server unavailable. Please try again in a moment.");
+    error.status = 0;
+    error.isNetwork = true;
+    throw error;
+  }
 
   let payload = {};
   try {
@@ -637,26 +646,29 @@ async function apiRequest(path, options = {}) {
 }
 
 async function loadInventoryFromServer() {
-  try {
-    const data = await apiRequest("/products");
-    const products = Array.isArray(data?.products) ? data.products : [];
-    if (products.length) {
-      setInventory(
-        products.map((item) => ({
-          id: String(item.id || ""),
-          title: String(item.title || ""),
-          category: String(item.category || ""),
-          image: String(item.image || ""),
-          note: String(item.note || ""),
-          fit: item.fit ? String(item.fit) : ""
-        }))
-      );
-      return;
-    }
-  } catch {
-    // Use fallback inventory when backend is unavailable.
-  }
-
+  // Backend fetch disabled for now - using frontend inventory only.
+  // try {
+  //   const data = await apiRequest("/products");
+  //   const products = Array.isArray(data?.products) ? data.products : [];
+  //   if (products.length) {
+  //     setInventory(
+  //       products.map((item) => ({
+  //         id: String(item.id || ""),
+  //         title: String(item.title || ""),
+  //         category: String(item.category || ""),
+  //         image: String(item.image || ""),
+  //         note: String(item.note || ""),
+  //         fit: item.fit ? String(item.fit) : ""
+  //       }))
+  //     );
+  //     return;
+  //   }
+  // } catch {
+  //   if (!backendDownNotified) {
+  //     backendDownNotified = true;
+  //     showToast("Server unavailable. Showing local catalog.");
+  //   }
+  // }
   setInventory([...defaultInventory]);
 }
 
@@ -1581,7 +1593,10 @@ function handleCheckoutSubmit() {
       }
     } catch (error) {
       if (status) {
-        status.textContent = error.message || "Could not place order. Please try again.";
+        status.textContent =
+          error.isNetwork
+            ? "Server unavailable. Please try again in a moment."
+            : error.message || "Could not place order. Please try again.";
       }
     }
   });
@@ -1674,7 +1689,12 @@ async function setupAuthPage() {
         window.location.href = next;
       }, 900);
     } catch (error) {
-      if (status) status.textContent = error.message || "Authentication failed.";
+      if (status) {
+        status.textContent =
+          error.isNetwork
+            ? "Server unavailable. Please try again in a moment."
+            : error.message || "Authentication failed.";
+      }
     }
   });
 }
@@ -1755,11 +1775,164 @@ async function setupProfilePage() {
     } catch (error) {
       if (error.status === 409 && phoneError) {
         phoneError.textContent = "Phone number is already registered.";
-      } else if (error.message && status) {
-        status.textContent = error.message || "Could not update profile.";
+      } else if (status) {
+        status.textContent =
+          error.isNetwork
+            ? "Server unavailable. Please try again in a moment."
+            : error.message || "Could not update profile.";
       }
     }
   });
+}
+
+function renderAccountProfile(session, container) {
+  if (!container) return;
+  container.innerHTML = `
+    <div class="account-card">
+      <div class="account-card-header">
+        <h3>Profile</h3>
+        <a class="ghost" href="profile.html">Edit Profile</a>
+      </div>
+      <dl class="account-grid">
+        <div>
+          <dt>Name</dt>
+          <dd>${session.name || "-"}</dd>
+        </div>
+        <div>
+          <dt>Email</dt>
+          <dd>${session.email || "-"}</dd>
+        </div>
+        <div>
+          <dt>Phone</dt>
+          <dd>${session.phone || "-"}</dd>
+        </div>
+        <div>
+          <dt>City</dt>
+          <dd>${session.city || "-"}</dd>
+        </div>
+        <div>
+          <dt>Profession</dt>
+          <dd>${session.profession || "-"}</dd>
+        </div>
+      </dl>
+    </div>
+  `;
+}
+
+function renderAccountWishlist(container) {
+  if (!container) return;
+  const items = getWishlistIds()
+    .map((id) => productMap.get(id))
+    .filter(Boolean);
+
+  if (!items.length) {
+    container.innerHTML = `<div class="account-card"><div class="empty">No wishlist items yet.</div></div>`;
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="account-card">
+      <h3>Wishlist</h3>
+      <div class="account-list">
+        ${items
+          .map(
+            (item) => `
+          <article class="account-item">
+            <img src="${item.image}" alt="${item.title}" />
+            <div>
+              <h4>${item.title}</h4>
+              <p>${item.category}</p>
+            </div>
+            <button class="wishlist-remove-btn" type="button" data-wishlist-remove="${item.id}" aria-label="Remove from wishlist">
+              <img src="images/delete.png" alt="" aria-hidden="true" />
+            </button>
+          </article>
+        `
+          )
+          .join("")}
+      </div>
+    </div>
+  `;
+}
+
+function renderAccountOrders(container, orders) {
+  if (!container) return;
+  if (!orders.length) {
+    container.innerHTML = `<div class="account-card"><div class="empty">No orders yet.</div></div>`;
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="account-card">
+      <h3>Orders</h3>
+      <div class="account-list">
+        ${orders
+          .map(
+            (order) => `
+          <article class="order-card">
+            <div class="order-header">
+              <div>
+                <h4>Order ${order.id}</h4>
+                <p>${new Date(order.createdAt).toLocaleDateString()}</p>
+              </div>
+              <span class="tag">${order.items.length} items</span>
+            </div>
+            <ul>
+              ${order.items
+                .map((item) => `<li>${item.title} x ${item.qty}</li>`)
+                .join("")}
+            </ul>
+          </article>
+        `
+          )
+          .join("")}
+      </div>
+    </div>
+  `;
+}
+
+async function setupAccountPage() {
+  const root = document.getElementById("accountPage");
+  if (!root) return;
+
+  const session = (await refreshSessionFromServer()) || getSession();
+  if (!session) {
+    window.location.href = getLoginUrl();
+    return;
+  }
+
+  const tabs = root.querySelectorAll("[data-account-tab]");
+  const sections = root.querySelectorAll("[data-account-section]");
+  const showSection = (id) => {
+    tabs.forEach((btn) => btn.classList.toggle("active", btn.dataset.accountTab === id));
+    sections.forEach((sec) => sec.classList.toggle("active", sec.dataset.accountSection === id));
+  };
+
+  tabs.forEach((btn) => {
+    btn.addEventListener("click", () => showSection(btn.dataset.accountTab));
+  });
+
+  const profileSlot = root.querySelector("[data-account-section='profile']");
+  const wishlistSlot = root.querySelector("[data-account-section='wishlist']");
+  const ordersSlot = root.querySelector("[data-account-section='orders']");
+
+  renderAccountProfile(session, profileSlot);
+  renderAccountWishlist(wishlistSlot);
+
+  if (ordersSlot) {
+    ordersSlot.innerHTML = `<div class="account-card"><div class="empty">Loading orders...</div></div>`;
+    try {
+      const data = await apiRequest("/orders/me");
+      const orders = Array.isArray(data?.orders) ? data.orders : [];
+      renderAccountOrders(ordersSlot, orders);
+    } catch (error) {
+      ordersSlot.innerHTML = `<div class="account-card"><div class="empty">${
+        error.isNetwork ? "Server unavailable. Please try again later." : "Could not load orders."
+      }</div></div>`;
+    }
+  }
+
+  showSection("profile");
 }
 
 async function setupAdminPage() {
@@ -1994,6 +2167,8 @@ function setupCartInteractions() {
       if (!id) return;
       await removeWishlistItem(id);
       renderWishlistModal();
+      const accountWishlist = document.querySelector("[data-account-section='wishlist']");
+      if (accountWishlist) renderAccountWishlist(accountWishlist);
       if (!getWishlistCount()) closeWishlistModal();
       return;
     }
@@ -2186,6 +2361,7 @@ async function bootstrap() {
   handleCheckoutSubmit();
   await setupAuthPage();
   await setupProfilePage();
+  await setupAccountPage();
   await setupAdminPage();
   updateCartBadge();
   renderAuthNav();
