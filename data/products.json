@@ -466,5 +466,12 @@
     "image": "images/Compressor1HP.png",
     "note": "",
     "fit": "contain-tight"
+  },
+  {
+    "id": "prd-67",
+    "title": "EndoZ Bur",
+    "category": "Accessories",
+    "image": "images/endozbur.png",
+    "note": ""
   }
 ]
