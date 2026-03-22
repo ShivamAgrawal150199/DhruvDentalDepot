@@ -174,10 +174,10 @@ products.renderCards = function renderCards(category) {
 
   data.forEach((item, index) => {
     const card = document.createElement("article");
-    card.className = "card";
+    card.className = `card${item.fit ? ` card-fit-${item.fit}` : ""}`;
     card.style.animationDelay = `${index * 0.04}s`;
 
-    const fitClass = item.fit === "contain" ? "fit-contain" : "";
+    const fitClass = item.fit ? `fit-${item.fit}` : "";
     const noteHtml = item.note ? `<p>${item.note}</p>` : "";
     card.innerHTML = `
       <div class="card-media">
@@ -444,7 +444,7 @@ products.openProductDrawer = function openProductDrawer(productId) {
   const content = drawer.querySelector(".product-drawer-content");
   if (!(content instanceof HTMLElement)) return;
 
-  const fitClass = product.fit === "contain" ? "fit-contain" : "";
+  const fitClass = product.fit ? `fit-${product.fit}` : "";
   const noteHtml = product.note ? `<p class="product-drawer-note">${product.note}</p>` : "";
   const wishlisted = products.isWishlisted(productId);
   const wishlistLabel = wishlisted ? "Wishlisted" : "Add to Wishlist";

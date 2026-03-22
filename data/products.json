@@ -451,5 +451,20 @@
     "category": "Dental Scaler Parts",
     "image": "images/Scalaercord.png",
     "note": ""
+  },
+  {
+    "id": "prd-65",
+    "title": "Compressor 0.75 HP",
+    "category": "Dental Compressor Parts",
+    "image": "images/DDENTAIR-COMPRESSOR.jpeg",
+    "note": ""
+  },
+  {
+    "id": "prd-66",
+    "title": "Compressor 1 HP",
+    "category": "Dental Compressor Parts",
+    "image": "images/Compressor1HP.png",
+    "note": "",
+    "fit": "contain-tight"
   }
 ]

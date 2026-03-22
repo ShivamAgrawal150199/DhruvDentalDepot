@@ -451,6 +451,17 @@ body.dark-theme .card-media {
   padding: 10px;
 }
 
+.card-media img.fit-contain-tight {
+  object-fit: contain;
+  padding: 2px;
+}
+
+@media (max-width: 720px) {
+  .card.card-fit-contain-tight .card-media {
+    aspect-ratio: 3 / 4;
+  }
+}
+
 .image-fallback {
   position: absolute;
   inset: 0;
@@ -1503,6 +1514,11 @@ body.lightbox-open {
 }
 
 .product-drawer-media img.fit-contain {
+  object-fit: contain;
+  padding: 0;
+}
+
+.product-drawer-media img.fit-contain-tight {
   object-fit: contain;
   padding: 0;
 }
