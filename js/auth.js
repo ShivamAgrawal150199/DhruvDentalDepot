@@ -253,8 +253,29 @@ auth.setupProfilePage = async function setupProfilePage() {
     professionInput.value = (session.profession || "").toLowerCase();
   }
 
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
+  const readState = () => ({
+    name: nameInput instanceof HTMLInputElement ? nameInput.value.trim() : "",
+    phone: phoneInput instanceof HTMLInputElement ? phoneInput.value.trim() : "",
+    city: cityInput instanceof HTMLInputElement ? cityInput.value.trim() : "",
+    profession: professionInput instanceof HTMLSelectElement ? professionInput.value.trim() : ""
+  });
+
+  let initialState = readState();
+  let isDirty = false;
+
+  const updateDirtyFlag = () => {
+    const next = readState();
+    isDirty =
+      next.name !== initialState.name ||
+      next.phone !== initialState.phone ||
+      next.city !== initialState.city ||
+      next.profession !== initialState.profession;
+  };
+
+  form.addEventListener("input", updateDirtyFlag);
+  form.addEventListener("change", updateDirtyFlag);
+
+  const saveProfile = async () => {
     const nextName = nameInput instanceof HTMLInputElement ? nameInput.value.trim() : "";
     const nextPhone = phoneInput instanceof HTMLInputElement ? phoneInput.value.trim() : "";
     const nextCity = cityInput instanceof HTMLInputElement ? cityInput.value.trim() : "";
@@ -263,11 +284,11 @@ auth.setupProfilePage = async function setupProfilePage() {
       : "";
     if (!nextName) {
       if (status) status.textContent = "Name is required.";
-      return;
+      return false;
     }
     if (!nextPhone) {
       if (phoneError) phoneError.textContent = "Phone number is required.";
-      return;
+      return false;
     }
     if (phoneError) phoneError.textContent = "";
     const phoneDigits = nextPhone.replace(/\D/g, "");
@@ -279,15 +300,15 @@ auth.setupProfilePage = async function setupProfilePage() {
     }
     if (!normalizedPhone) {
       if (phoneError) phoneError.textContent = "Enter a valid 10-digit Indian phone number.";
-      return;
+      return false;
     }
     if (!nextCity) {
       if (status) status.textContent = "City is required.";
-      return;
+      return false;
     }
     if (!nextProfession) {
       if (status) status.textContent = "Profession is required.";
-      return;
+      return false;
     }
 
     try {
@@ -301,6 +322,9 @@ auth.setupProfilePage = async function setupProfilePage() {
       if (status) status.textContent = "Profile updated successfully.";
       ui?.showToast("Profile updated.", { type: "success" });
       document.dispatchEvent(new CustomEvent("auth:profile-updated", { detail: data?.user }));
+      initialState = readState();
+      isDirty = false;
+      return true;
     } catch (error) {
       if (error.status === 409 && phoneError) {
         phoneError.textContent = "Phone number is already registered.";
@@ -318,7 +342,59 @@ auth.setupProfilePage = async function setupProfilePage() {
           { type: "error" }
         );
       }
+      return false;
     }
+  };
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    await saveProfile();
+  });
+
+  const shouldIgnoreLink = (link) => {
+    if (!link || !(link instanceof HTMLAnchorElement)) return true;
+    if (link.hasAttribute("data-skip-guard")) return true;
+    if (link.target === "_blank") return true;
+    const href = link.getAttribute("href") || "";
+    if (!href || href.startsWith("#") || href.startsWith("javascript:")) return true;
+    if (href.startsWith("mailto:") || href.startsWith("tel:")) return true;
+    if (link.closest(".confirm-modal")) return true;
+    try {
+      const url = new URL(href, window.location.href);
+      if (url.origin !== window.location.origin) return true;
+      const current = window.location.pathname;
+      if (url.pathname === current && url.search === window.location.search) return true;
+    } catch {
+      return true;
+    }
+    return false;
+  };
+
+  document.addEventListener("click", async (event) => {
+    if (!isDirty) return;
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
+    const link = target.closest("a");
+    if (shouldIgnoreLink(link)) return;
+    event.preventDefault();
+    const href = link.getAttribute("href");
+    const ok = await ui?.showConfirmDialog?.({
+      title: "Unsaved Changes",
+      message: "You have unsaved changes. Save before leaving this page?",
+      confirmLabel: "Save",
+      cancelLabel: "Cancel"
+    });
+    if (!ok) return;
+    const saved = await saveProfile();
+    if (saved && href) {
+      window.location.href = href;
+    }
+  });
+
+  window.addEventListener("beforeunload", (event) => {
+    if (!isDirty) return;
+    event.preventDefault();
+    event.returnValue = "";
   });
 };
 

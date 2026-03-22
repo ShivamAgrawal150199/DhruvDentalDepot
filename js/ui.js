@@ -59,12 +59,12 @@ ui.getConfirmModal = function getConfirmModal() {
   modal.setAttribute("aria-hidden", "true");
   modal.innerHTML = `
     <div class="confirm-backdrop" data-confirm-cancel="true"></div>
-    <div class="confirm-panel" role="dialog" aria-modal="true" aria-label="Confirm logout">
-      <h3 id="confirmTitle">Confirm Logout</h3>
+    <div class="confirm-panel" role="dialog" aria-modal="true" aria-label="Confirmation">
+      <h3 id="confirmTitle">Confirm</h3>
       <p id="confirmMessage"></p>
       <div class="confirm-actions">
         <button class="ghost" type="button" data-confirm-cancel="true">Cancel</button>
-        <button class="primary" type="button" data-confirm-yes="true">Yes, Logout</button>
+        <button class="primary" type="button" data-confirm-yes="true">Confirm</button>
       </div>
     </div>
   `;
@@ -72,13 +72,25 @@ ui.getConfirmModal = function getConfirmModal() {
   return modal;
 };
 
-ui.showConfirmLogout = function showConfirmLogout(message) {
+ui.showConfirmDialog = function showConfirmDialog(options = {}) {
+  const {
+    title = "Confirm",
+    message = "",
+    confirmLabel = "Confirm",
+    cancelLabel = "Cancel"
+  } = options;
   const modal = ui.getConfirmModal();
+  const titleEl = modal.querySelector("#confirmTitle");
   const messageEl = modal.querySelector("#confirmMessage");
   const yesBtn = modal.querySelector("[data-confirm-yes]");
   const cancelButtons = modal.querySelectorAll("[data-confirm-cancel]");
 
+  if (titleEl) titleEl.textContent = title;
   if (messageEl) messageEl.textContent = message;
+  if (yesBtn instanceof HTMLButtonElement) yesBtn.textContent = confirmLabel;
+  cancelButtons.forEach((btn) => {
+    if (btn instanceof HTMLButtonElement) btn.textContent = cancelLabel;
+  });
   modal.classList.add("open");
   modal.setAttribute("aria-hidden", "false");
   document.body.classList.add("modal-open");
@@ -110,6 +122,15 @@ ui.showConfirmLogout = function showConfirmLogout(message) {
     yesBtn?.addEventListener("click", onYes);
     cancelButtons.forEach((btn) => btn.addEventListener("click", onCancel));
     document.addEventListener("keydown", onKeydown);
+  });
+};
+
+ui.showConfirmLogout = function showConfirmLogout(message) {
+  return ui.showConfirmDialog({
+    title: "Confirm Logout",
+    message,
+    confirmLabel: "Yes, Logout",
+    cancelLabel: "Cancel"
   });
 };
 
