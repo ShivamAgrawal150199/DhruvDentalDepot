@@ -1,0 +1,455 @@
+[
+  {
+    "id": "prd-1",
+    "title": "Instrument 01",
+    "category": "Accessories",
+    "image": "images/ChatGPT Image Feb 7, 2026, 06_06_40 PM.png",
+    "note": ""
+  },
+  {
+    "id": "prd-2",
+    "title": "Instrument 02",
+    "category": "Accessories",
+    "image": "images/ChatGPT Image Feb 7, 2026, 11_27_32 PM.png",
+    "note": ""
+  },
+  {
+    "id": "prd-3",
+    "title": "Instrument 03",
+    "category": "Accessories",
+    "image": "images/ChatGPT Image Feb 7, 2026, 11_38_07 PM.png",
+    "note": ""
+  },
+  {
+    "id": "prd-4",
+    "title": "Instrument 04",
+    "category": "Accessories",
+    "image": "images/ChatGPT Image Feb 8, 2026, 12_27_42 AM.png",
+    "note": ""
+  },
+  {
+    "id": "prd-5",
+    "title": "Instrument 05",
+    "category": "Accessories",
+    "image": "images/ChatGPT Image Feb 8, 2026, 12_37_07 AM.png",
+    "note": "",
+    "fit": "contain"
+  },
+  {
+    "id": "prd-6",
+    "title": "Instrument 06",
+    "category": "Accessories",
+    "image": "images/ChatGPT Image Feb 8, 2026, 12_41_05 AM.png",
+    "note": "",
+    "fit": "contain"
+  },
+  {
+    "id": "prd-7",
+    "title": "Mandrel",
+    "category": "Accessories",
+    "image": "images/ChatGPT Image Feb 8, 2026, 12_43_30 AM.png",
+    "note": "",
+    "fit": "contain"
+  },
+  {
+    "id": "prd-8",
+    "title": "Portable Turbine Unit",
+    "category": "Accessories",
+    "image": "images/portableTrurbineUnitchnfged1.jpeg",
+    "note": ""
+  },
+  {
+    "id": "prd-9",
+    "title": "Instrument 08",
+    "category": "Accessories",
+    "image": "images/WhatsApp Image 2026-02-07 at 18.09.13.jpeg",
+    "note": ""
+  },
+  {
+    "id": "prd-10",
+    "title": "Micromotor Cord",
+    "category": "Accessories",
+    "image": "images/MicromotorCord.jpeg",
+    "note": ""
+  },
+  {
+    "id": "prd-11",
+    "title": "New 01",
+    "category": "Accessories",
+    "image": "images/new1.jpeg",
+    "note": ""
+  },
+  {
+    "id": "prd-12",
+    "title": "New 02",
+    "category": "Accessories",
+    "image": "images/new2.jpeg",
+    "note": ""
+  },
+  {
+    "id": "prd-13",
+    "title": "New 03",
+    "category": "Accessories",
+    "image": "images/new3.jpeg",
+    "note": ""
+  },
+  {
+    "id": "prd-14",
+    "title": "Foot Control",
+    "category": "Accessories",
+    "image": "images/new4.png",
+    "note": ""
+  },
+  {
+    "id": "prd-15",
+    "title": "New 05",
+    "category": "Accessories",
+    "image": "images/new5.png",
+    "note": ""
+  },
+  {
+    "id": "prd-16",
+    "title": "Bur Wrench",
+    "category": "Accessories",
+    "image": "images/new6.jpeg",
+    "note": ""
+  },
+  {
+    "id": "prd-17",
+    "title": "Transformer",
+    "category": "Accessories",
+    "image": "images/new7.png",
+    "note": ""
+  },
+  {
+    "id": "prd-18",
+    "title": "Oil free compressor head 1 HP with accessories",
+    "category": "Dental Compressor Parts",
+    "image": "images/Comp1.jpeg",
+    "note": ""
+  },
+  {
+    "id": "prd-19",
+    "title": "Piston leather 0.75/1 HP",
+    "category": "Dental Compressor Parts",
+    "image": "images/Comp2.jpg",
+    "note": ""
+  },
+  {
+    "id": "prd-20",
+    "title": "Air Filter Metal",
+    "category": "Dental Compressor Parts",
+    "image": "images/Comp3.png",
+    "note": ""
+  },
+  {
+    "id": "prd-21",
+    "title": "Piston 1 HP",
+    "category": "Dental Compressor Parts",
+    "image": "images/Comp4.jpg",
+    "note": ""
+  },
+  {
+    "id": "prd-22",
+    "title": "Magnetic Valve",
+    "category": "Dental Compressor Parts",
+    "image": "images/Comp5.jpg",
+    "note": ""
+  },
+  {
+    "id": "prd-23",
+    "title": "Pressure Gauge",
+    "category": "Dental Compressor Parts",
+    "image": "images/Comp6.jpg",
+    "note": ""
+  },
+  {
+    "id": "prd-24",
+    "title": "Air out nozzle",
+    "category": "Dental Compressor Parts",
+    "image": "images/Comp7.jpg",
+    "note": ""
+  },
+  {
+    "id": "prd-25",
+    "title": "Moisture Filter",
+    "category": "Dental Compressor Parts",
+    "image": "images/Comp8.jpg",
+    "note": ""
+  },
+  {
+    "id": "prd-26",
+    "title": "Autocut Switch",
+    "category": "Dental Compressor Parts",
+    "image": "images/Comp9.jpeg",
+    "note": ""
+  },
+  {
+    "id": "prd-27",
+    "title": "Air pipe",
+    "category": "Dental Compressor Parts",
+    "image": "images/Comp10.jpeg",
+    "note": ""
+  },
+  {
+    "id": "prd-28",
+    "title": "Air filter plastic",
+    "category": "Dental Compressor Parts",
+    "image": "images/Comp11.png",
+    "note": ""
+  },
+  {
+    "id": "prd-29",
+    "title": "NRV",
+    "category": "Dental Compressor Parts",
+    "image": "images/Comp12.png",
+    "note": ""
+  },
+  {
+    "id": "prd-30",
+    "title": "Compressor bottom rubber set",
+    "category": "Dental Compressor Parts",
+    "image": "images/Comp13.jpeg",
+    "note": ""
+  },
+  {
+    "id": "prd-31",
+    "title": "NRV with magnetic valve",
+    "category": "Dental Compressor Parts",
+    "image": "images/Comp14.jpeg",
+    "note": ""
+  },
+  {
+    "id": "prd-32",
+    "title": "Compressor Parts",
+    "category": "Dental Compressor Parts",
+    "image": "images/CompressorParts.png",
+    "note": ""
+  },
+  {
+    "id": "prd-33",
+    "title": "Compressor Parts",
+    "category": "Dental Compressor Parts",
+    "image": "images/CompressorParts2.png",
+    "note": ""
+  },
+  {
+    "id": "prd-34",
+    "title": "Compressor Parts",
+    "category": "Dental Compressor Parts",
+    "image": "images/CompressorParts3.png",
+    "note": ""
+  },
+  {
+    "id": "prd-35",
+    "title": "Compressor Parts",
+    "category": "Dental Compressor Parts",
+    "image": "images/CompressorParts4.png",
+    "note": ""
+  },
+  {
+    "id": "prd-36",
+    "title": "Compressor Parts",
+    "category": "Dental Compressor Parts",
+    "image": "images/CompressorParts5.png",
+    "note": ""
+  },
+  {
+    "id": "prd-37",
+    "title": "Air Scalar",
+    "category": "Dental Handpieces",
+    "image": "images/airScalar.jpeg",
+    "note": ""
+  },
+  {
+    "id": "prd-38",
+    "title": "Handpiece 2",
+    "category": "Dental Handpieces",
+    "image": "images/handpiece2.jpg",
+    "note": ""
+  },
+  {
+    "id": "prd-39",
+    "title": "3 Way Syringe",
+    "category": "Dental Handpieces",
+    "image": "images/3waysyringe.jpeg",
+    "note": "",
+    "fit": "contain"
+  },
+  {
+    "id": "prd-40",
+    "title": "Straight Handpiece",
+    "category": "Dental Handpieces",
+    "image": "images/straightHhandpiece.png",
+    "note": "",
+    "fit": "contain"
+  },
+  {
+    "id": "prd-41",
+    "title": "Water Filter",
+    "category": "Dental Chair Parts",
+    "image": "images/chairparts1.png",
+    "note": ""
+  },
+  {
+    "id": "prd-42",
+    "title": "Chair Diaphragm",
+    "category": "Dental Chair Parts",
+    "image": "images/chairdiaphragm.png",
+    "note": ""
+  },
+  {
+    "id": "prd-43",
+    "title": "Bottle Cap",
+    "category": "Dental Chair Parts",
+    "image": "images/BottleCapp.png",
+    "note": ""
+  },
+  {
+    "id": "prd-44",
+    "title": "Glass Bowl Funnel",
+    "category": "Dental Chair Parts",
+    "image": "images/GlassBowlFunnel.png",
+    "note": ""
+  },
+  {
+    "id": "prd-45",
+    "title": "Control Valve",
+    "category": "Dental Chair Parts",
+    "image": "images/chairparts2.png",
+    "note": ""
+  },
+  {
+    "id": "prd-46",
+    "title": "Integrated Valve",
+    "category": "Dental Chair Parts",
+    "image": "images/chairparts3.png",
+    "note": ""
+  },
+  {
+    "id": "prd-47",
+    "title": "Air Rreducer",
+    "category": "Dental Chair Parts",
+    "image": "images/chairparts4.png",
+    "note": ""
+  },
+  {
+    "id": "prd-48",
+    "title": "Weak Suction holder with connector",
+    "category": "Dental Chair Parts",
+    "image": "images/chairparts5.png",
+    "note": ""
+  },
+  {
+    "id": "prd-49",
+    "title": "Normal open valve",
+    "category": "Dental Chair Parts",
+    "image": "images/chairparts6.png",
+    "note": ""
+  },
+  {
+    "id": "prd-50",
+    "title": "Foot Control",
+    "category": "Dental Chair Parts",
+    "image": "images/chairparts7.png",
+    "note": ""
+  },
+  {
+    "id": "prd-51",
+    "title": "Square pressure meter",
+    "category": "Dental Chair Parts",
+    "image": "images/chairparts8.png",
+    "note": ""
+  },
+  {
+    "id": "prd-52",
+    "title": "Pressure valve",
+    "category": "Dental Chair Parts",
+    "image": "images/chairparts9.png",
+    "note": ""
+  },
+  {
+    "id": "prd-53",
+    "title": "Coupling",
+    "category": "Dental Chair Parts",
+    "image": "images/Coupling2to4.png",
+    "note": ""
+  },
+  {
+    "id": "prd-54",
+    "title": "Coupling",
+    "category": "Dental Chair Parts",
+    "image": "images/Coupling4to2.png",
+    "note": ""
+  },
+  {
+    "id": "prd-55",
+    "title": "Glass Bowl",
+    "category": "Dental Chair Parts",
+    "image": "images/chairparts10.png",
+    "note": ""
+  },
+  {
+    "id": "prd-56",
+    "title": "Glass Bowl",
+    "category": "Dental Chair Parts",
+    "image": "images/chairparts11.png",
+    "note": ""
+  },
+  {
+    "id": "prd-57",
+    "title": "Glass Bowl",
+    "category": "Dental Chair Parts",
+    "image": "images/chairparts12.png",
+    "note": ""
+  },
+  {
+    "id": "prd-58",
+    "title": "Glass Bowl",
+    "category": "Dental Chair Parts",
+    "image": "images/chairparts13.png",
+    "note": ""
+  },
+  {
+    "id": "prd-59",
+    "title": "Scaler Part 01",
+    "category": "Dental Scaler Parts",
+    "image": "images/scalerparts1.jpeg",
+    "note": ""
+  },
+  {
+    "id": "prd-60",
+    "title": "Scaler Part 02",
+    "category": "Dental Scaler Parts",
+    "image": "images/scalarparts2.jpeg",
+    "note": ""
+  },
+  {
+    "id": "prd-61",
+    "title": "Scaler solenoid valve",
+    "category": "Dental Scaler Parts",
+    "image": "images/scalerparts3.png",
+    "note": ""
+  },
+  {
+    "id": "prd-62",
+    "title": "Scaler Part 04",
+    "category": "Dental Scaler Parts",
+    "image": "images/scalarparts4.jpeg",
+    "note": ""
+  },
+  {
+    "id": "prd-63",
+    "title": "Scaler tip opener",
+    "category": "Dental Scaler Parts",
+    "image": "images/scalertipopener.jpg",
+    "note": ""
+  },
+  {
+    "id": "prd-64",
+    "title": "Scaler cord",
+    "category": "Dental Scaler Parts",
+    "image": "images/Scalaercord.png",
+    "note": ""
+  }
+]
