@@ -473,5 +473,19 @@
     "category": "Accessories",
     "image": "images/endozbur.png",
     "note": ""
+  },
+  {
+    "id": "prd-68",
+    "title": "Contra Angle Handpiece",
+    "category": "Dental Handpieces",
+    "image": "images/ContraAngle.jpeg",
+    "note": ""
+  },
+  {
+    "id": "prd-69",
+    "title": "Bur Adopter",
+    "category": "Accessories",
+    "image": "images/BurAdopter.png",
+    "note": ""
   }
 ]
