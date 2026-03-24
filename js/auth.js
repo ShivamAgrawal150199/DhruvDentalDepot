@@ -357,6 +357,33 @@ auth.setupProfilePage = async function setupProfilePage() {
     await saveProfile();
   });
 
+  const deleteBtn = form.querySelector("[data-delete-account]");
+  if (deleteBtn instanceof HTMLButtonElement) {
+    deleteBtn.addEventListener("click", async () => {
+      const ok = await ui?.showConfirmDialog?.({
+        title: "Delete Account",
+        message: "This will permanently delete your account and wishlist. Continue?",
+        confirmLabel: "Yes, Delete",
+        cancelLabel: "Cancel"
+      });
+      if (!ok) return;
+      try {
+        await auth.apiRequest("/auth/me", { method: "DELETE" });
+        auth.clearSession();
+        window.App?.products?.saveWishlist?.([]);
+        ui?.showToast("Account deleted successfully.", { type: "success" });
+        window.location.href = "index.html";
+      } catch (error) {
+        ui?.showToast(
+          error.isNetwork
+            ? "Server unavailable. Please try again in a moment."
+            : error.message || "Could not delete account.",
+          { type: "error" }
+        );
+      }
+    });
+  }
+
   const shouldIgnoreLink = (link) => {
     if (!link || !(link instanceof HTMLAnchorElement)) return true;
     if (link.hasAttribute("data-skip-guard")) return true;

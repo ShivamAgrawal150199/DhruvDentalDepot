@@ -256,6 +256,15 @@ body.dark-theme {
   color: var(--ink);
 }
 
+.danger-btn {
+  border-color: #b02a2a;
+  color: #b02a2a;
+}
+
+.danger-btn:hover {
+  background: rgba(176, 42, 42, 0.12);
+}
+
 .ghost.small {
   padding: 8px 12px;
   font-size: 0.85rem;
