@@ -246,7 +246,10 @@ auth.setupProfilePage = async function setupProfilePage() {
   const phoneError = document.getElementById("phoneError");
   if (nameInput instanceof HTMLInputElement) nameInput.value = session.name || "";
   if (emailInput instanceof HTMLInputElement) emailInput.value = session.email || "";
-  if (phoneInput instanceof HTMLInputElement) phoneInput.value = session.phone || "";
+  if (phoneInput instanceof HTMLInputElement) {
+    phoneInput.value = session.phone || "";
+    phoneInput.readOnly = Boolean(session.phone);
+  }
   if (cityInput instanceof HTMLInputElement) cityInput.value = session.city || "";
   const professionInput = form.querySelector("select[name='profession']");
   if (professionInput instanceof HTMLSelectElement) {
@@ -318,6 +321,9 @@ auth.setupProfilePage = async function setupProfilePage() {
       });
       if (data?.user) {
         auth.saveSession(data.user);
+      }
+      if (phoneInput instanceof HTMLInputElement) {
+        phoneInput.readOnly = Boolean(normalizedPhone);
       }
       if (status) status.textContent = "Profile updated successfully.";
       ui?.showToast("Profile updated.", { type: "success" });
