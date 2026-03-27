@@ -175,6 +175,13 @@ auth.setupAuthPage = async function setupAuthPage() {
     const email = String(formData.get("email") || "").trim().toLowerCase();
     const password = String(formData.get("password") || "");
 
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if (!emailOk) {
+      if (status) status.textContent = "Enter a valid email address.";
+      ui?.showToast("Enter a valid email address.", { type: "error" });
+      return;
+    }
+
     if (!email || !password) {
       if (status) status.textContent = "Email and password are required.";
       return;
