@@ -1182,8 +1182,12 @@ body.dark-theme .password-toggle {
 }
 
 footer {
-  padding: 24px 8vw 40px;
-  color: var(--slate);
+  margin-top: 40px;
+  padding: 28px 8vw 44px;
+  color: #e6ebef;
+  background: #12233a;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 -12px 30px rgba(10, 20, 34, 0.45);
 }
 
 @media (max-width: 980px) {
