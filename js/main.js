@@ -9,6 +9,11 @@ const WHATSAPP_NUMBER = "919335485398";
 let imageLightbox = null;
 let userDrawer = null;
 let userDrawerAnchor = null;
+let eventModal = null;
+
+const EVENT_IMAGE_SRC = "images/ChennaiExpo.png";
+const EVENT_TITLE = "Chennai Expo";
+const EVENT_COPY = "Tap to view the full event poster.";
 
 function getUserDrawer() {
   if (userDrawer) return userDrawer;
@@ -245,6 +250,71 @@ function closeImageLightbox() {
   imageLightbox.classList.remove("open");
   imageLightbox.setAttribute("aria-hidden", "true");
   document.body.classList.remove("lightbox-open");
+}
+
+function getEventModal() {
+  if (eventModal) return eventModal;
+
+  const modal = document.createElement("div");
+  modal.className = "event-modal";
+  modal.setAttribute("aria-hidden", "true");
+  modal.innerHTML = `
+    <div class="event-modal-panel" role="dialog" aria-modal="true" aria-label="${EVENT_TITLE}">
+      <button class="event-modal-close" type="button" aria-label="Close event">X</button>
+      <img src="${EVENT_IMAGE_SRC}" alt="${EVENT_TITLE}" />
+    </div>
+  `;
+
+  modal.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
+    if (target.classList.contains("event-modal") || target.classList.contains("event-modal-close")) {
+      closeEventModal();
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeEventModal();
+  });
+
+  document.body.appendChild(modal);
+  eventModal = modal;
+  return modal;
+}
+
+function openEventModal() {
+  const modal = getEventModal();
+  modal.classList.add("open");
+  modal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("event-modal-open");
+}
+
+function closeEventModal() {
+  if (!eventModal) return;
+  eventModal.classList.remove("open");
+  eventModal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("event-modal-open");
+}
+
+function setupEventBanner() {
+  const nav = document.querySelector(".top-nav");
+  if (!nav || document.querySelector(".event-banner")) return;
+
+  const banner = document.createElement("button");
+  banner.type = "button";
+  banner.className = "event-banner";
+  banner.setAttribute("aria-label", `${EVENT_TITLE} announcement`);
+  banner.innerHTML = `
+    <span class="event-badge">Upcoming Event</span>
+    <div class="event-banner-content">
+      <span class="event-banner-title">${EVENT_TITLE}</span>
+      <span class="event-banner-copy">${EVENT_COPY}</span>
+    </div>
+    <img class="event-banner-thumb" src="${EVENT_IMAGE_SRC}" alt="${EVENT_TITLE} poster" />
+  `;
+
+  banner.addEventListener("click", () => openEventModal());
+  nav.insertAdjacentElement("afterend", banner);
 }
 
 function setupScrollReveal() {
@@ -784,6 +854,7 @@ async function bootstrap() {
   setupStickyContactBar();
   setupPriceListForm();
   setupCartInteractions();
+  setupEventBanner();
 }
 
 document.addEventListener("auth:login", async () => {
