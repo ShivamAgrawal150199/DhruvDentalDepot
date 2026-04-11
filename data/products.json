@@ -487,5 +487,12 @@
     "category": "Accessories",
     "image": "images/BurAdopter.png",
     "note": ""
+  },
+  {
+    "id": "prd-70",
+    "title": "BR-31S",
+    "category": "Diamond Burs",
+    "image": "images/BR31S.jpeg",
+    "note": "Diamond bur"
   }
 ]

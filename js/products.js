@@ -8,7 +8,8 @@ const CATEGORY_PAGE_MAP = {
   "Dental Chair Parts": "dental-chair-parts.html",
   "Dental Handpieces": "dental-handpieces.html",
   "Dental Scaler Parts": "dental-scaler-parts.html",
-  Accessories: "accessories.html"
+  Accessories: "accessories.html",
+  "Diamond Burs": "diamond-burs.html"
 };
 
 let wishlistIds = null;
