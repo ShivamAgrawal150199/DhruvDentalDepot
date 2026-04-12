@@ -536,5 +536,12 @@
     "category": "Diamond Burs",
     "image": "images/TF12S.jpeg",
     "note": "Diamond bur"
+  },
+  {
+    "id": "prd-77",
+    "title": "EX-26S",
+    "category": "Diamond Burs",
+    "image": "images/EX26S.jpeg",
+    "note": "Diamond bur"
   }
 ]
