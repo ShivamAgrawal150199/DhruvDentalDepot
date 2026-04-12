@@ -490,9 +490,51 @@
   },
   {
     "id": "prd-70",
+    "title": "BR-30C",
+    "category": "Diamond Burs",
+    "image": "images/BR30C.jpeg",
+    "note": "Diamond bur"
+  },
+  {
+    "id": "prd-71",
     "title": "BR-31S",
     "category": "Diamond Burs",
     "image": "images/BR31S.jpeg",
+    "note": "Diamond bur"
+  },
+  {
+    "id": "prd-72",
+    "title": "SF-11S",
+    "category": "Diamond Burs",
+    "image": "images/SF11S.jpeg",
+    "note": "Diamond bur"
+  },
+  {
+    "id": "prd-73",
+    "title": "SF-13C",
+    "category": "Diamond Burs",
+    "image": "images/SF13C.jpeg",
+    "note": "Diamond bur"
+  },
+   {
+    "id": "prd-74",
+    "title": "SF-41C",
+    "category": "Diamond Burs",
+    "image": "images/SF41C.jpeg",
+    "note": "Diamond bur"
+  },
+  {
+    "id": "prd-75",
+    "title": "TR-12S",
+    "category": "Diamond Burs",
+    "image": "images/TR12S.jpeg",
+    "note": "Diamond bur"
+  },
+  {
+    "id": "prd-76",
+    "title": "TF-12S",
+    "category": "Diamond Burs",
+    "image": "images/TF12S.jpeg",
     "note": "Diamond bur"
   }
 ]
