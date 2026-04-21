@@ -11,9 +11,7 @@ let userDrawer = null;
 let userDrawerAnchor = null;
 let eventModal = null;
 
-const EVENT_IMAGE_SRC = "images/ChennaiExpo.png";
-const EVENT_TITLE = "Chennai Expo";
-const EVENT_COPY = "Tap to view the full event poster.";
+const EVENTS_PAGE_HREF = "events.html";
 
 function getUserDrawer() {
   if (userDrawer) return userDrawer;
@@ -157,6 +155,17 @@ function renderAuthNav() {
   const navLinks = document.querySelector(".nav-links");
   if (!navLinks) return;
 
+  let eventsLink = navLinks.querySelector("[data-events-link]");
+  if (!eventsLink) {
+    eventsLink = document.createElement("a");
+    eventsLink.setAttribute("data-events-link", "true");
+    eventsLink.href = EVENTS_PAGE_HREF;
+    eventsLink.textContent = "Events";
+    const cartLink = navLinks.querySelector(".cart-link");
+    if (cartLink) navLinks.insertBefore(eventsLink, cartLink);
+    else navLinks.appendChild(eventsLink);
+  }
+
   const session = window.App?.auth?.getSession?.();
   let adminLink = navLinks.querySelector("[data-admin-link]");
   let authLink = navLinks.querySelector("[data-auth-link]");
@@ -259,9 +268,9 @@ function getEventModal() {
   modal.className = "event-modal";
   modal.setAttribute("aria-hidden", "true");
   modal.innerHTML = `
-    <div class="event-modal-panel" role="dialog" aria-modal="true" aria-label="${EVENT_TITLE}">
+    <div class="event-modal-panel" role="dialog" aria-modal="true" aria-label="Event poster">
       <button class="event-modal-close" type="button" aria-label="Close event">X</button>
-      <img src="${EVENT_IMAGE_SRC}" alt="${EVENT_TITLE}" />
+      <img src="" alt="Event poster" />
     </div>
   `;
 
@@ -282,8 +291,13 @@ function getEventModal() {
   return modal;
 }
 
-function openEventModal() {
+function openEventModal(src, alt) {
   const modal = getEventModal();
+  const image = modal.querySelector("img");
+  if (image instanceof HTMLImageElement) {
+    image.src = src || "";
+    image.alt = alt || "Event poster";
+  }
   modal.classList.add("open");
   modal.setAttribute("aria-hidden", "false");
   document.body.classList.add("event-modal-open");
@@ -296,25 +310,21 @@ function closeEventModal() {
   document.body.classList.remove("event-modal-open");
 }
 
-function setupEventBanner() {
-  const nav = document.querySelector(".top-nav");
-  if (!nav || document.querySelector(".event-banner")) return;
+function setupEventsPage() {
+  const eventsList = document.querySelector("[data-events-list]");
+  if (!(eventsList instanceof HTMLElement)) return;
 
-  const banner = document.createElement("button");
-  banner.type = "button";
-  banner.className = "event-banner";
-  banner.setAttribute("aria-label", `${EVENT_TITLE} announcement`);
-  banner.innerHTML = `
-    <span class="event-badge">Upcoming Event</span>
-    <div class="event-banner-content">
-      <span class="event-banner-title">${EVENT_TITLE}</span>
-      <span class="event-banner-copy">${EVENT_COPY}</span>
-    </div>
-    <img class="event-banner-thumb" src="${EVENT_IMAGE_SRC}" alt="${EVENT_TITLE} poster" />
-  `;
-
-  banner.addEventListener("click", () => openEventModal());
-  nav.insertAdjacentElement("afterend", banner);
+  eventsList.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
+    const trigger = target.closest("[data-event-poster]");
+    if (!(trigger instanceof HTMLElement)) return;
+    event.preventDefault();
+    const src = trigger.dataset.eventPosterSrc || "";
+    const title = trigger.dataset.eventTitle || "Event poster";
+    if (!src) return;
+    openEventModal(src, title);
+  });
 }
 
 function setupScrollReveal() {
@@ -854,7 +864,7 @@ async function bootstrap() {
   setupStickyContactBar();
   setupPriceListForm();
   setupCartInteractions();
-  setupEventBanner();
+  setupEventsPage();
 }
 
 document.addEventListener("auth:login", async () => {
