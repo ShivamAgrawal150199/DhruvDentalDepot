@@ -493,14 +493,31 @@
     "title": "BR-30C",
     "category": "Diamond Burs",
     "image": "images/BR30C.jpeg",
-    "note": "Diamond bur"
+    "note": "Diamond bur",
+    "detailsIntro": "A BR-30C bur is a type of dental rotary bur commonly used in dental laboratories and clinics for cutting, trimming, and shaping materials. The exact use can vary slightly by manufacturer.",
+    "details": [
+      "Trimming acrylic dentures",
+      "Shaping dental plaster or stone",
+      "Adjusting temporary crowns or prosthetics",
+      "Finishing and contouring dental materials",
+      "Used for selected metal or resin adjustments"
+    ]
   },
   {
     "id": "prd-71",
     "title": "BR-31S",
     "category": "Diamond Burs",
     "image": "images/BR31S.jpeg",
-    "note": "Diamond bur"
+    "note": "Diamond bur",
+    "detailsIntro": "The BR-31S diamond bur is a round (ball-shaped) super coarse diamond bur commonly used in restorative and prosthodontic dental procedures. The “S” usually indicates Super Coarse grit (black ring).",
+    "details": [
+      "Cavity preparation: Helps in initial entry and rapid cutting of enamel/dentin.",
+      "Endodontic access opening: Used to open the pulp chamber during root canal treatment.",
+      "Crown preparation & depth cuts: Useful for making orientation grooves and reducing tooth structure quickly.",
+      "Occlusal rest preparation: Commonly used in removable partial denture preparations.",
+      "Bulk tooth reduction: Since it is super coarse, it removes tooth  structure aggressively and fast.",
+      "Sectioning old crowns or restorations: Helps in cutting through hard restorative materials."
+    ]
   },
   {
     "id": "prd-72",

@@ -447,6 +447,21 @@ products.openProductDrawer = function openProductDrawer(productId) {
 
   const fitClass = product.fit ? `fit-${product.fit}` : "";
   const noteHtml = product.note ? `<p class="product-drawer-note">${product.note}</p>` : "";
+  const detailsIntro = String(product.detailsIntro || "").trim();
+  const detailsItems = Array.isArray(product.details)
+    ? product.details.map((item) => String(item || "").trim()).filter(Boolean)
+    : [];
+  const detailsIntroHtml = detailsIntro ? `<p class="product-drawer-copy">${detailsIntro}</p>` : "";
+  const detailsListHtml = detailsItems.length
+    ? `
+      <div class="product-drawer-details">
+        <h4>Common Uses</h4>
+        <ul>
+          ${detailsItems.map((item) => `<li>${item}</li>`).join("")}
+        </ul>
+      </div>
+    `
+    : "";
   const wishlisted = products.isWishlisted(productId);
   const wishlistLabel = wishlisted ? "Wishlisted" : "Add to Wishlist";
   const wishlistState = wishlisted ? " active" : "";
@@ -475,6 +490,8 @@ products.openProductDrawer = function openProductDrawer(productId) {
           <span class="wishlist-text">${wishlistLabel}</span>
         </button>
       </div>
+      ${detailsIntroHtml}
+      ${detailsListHtml}
     </div>
   `;
 
@@ -504,7 +521,9 @@ products.loadProductsFromJson = async function loadProductsFromJson() {
     category: String(item.category || ""),
     image: String(item.image || ""),
     note: String(item.note || ""),
-    fit: item.fit ? String(item.fit) : ""
+    fit: item.fit ? String(item.fit) : "",
+    detailsIntro: String(item.detailsIntro || ""),
+    details: Array.isArray(item.details) ? item.details.map((entry) => String(entry || "")) : []
   }));
 };
 

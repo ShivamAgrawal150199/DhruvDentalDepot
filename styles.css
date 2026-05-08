@@ -1820,6 +1820,29 @@ body.lightbox-open {
   margin: 0 0 10px;
 }
 
+.product-drawer-details {
+  margin: 16px 0 12px;
+}
+
+.product-drawer-details h4 {
+  margin: 0 0 8px;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.product-drawer-details ul {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--slate);
+}
+
+.product-drawer-details li {
+  margin: 0 0 6px;
+  line-height: 1.5;
+}
+
 .product-drawer-actions .primary {
   display: inline-flex;
   align-items: center;
@@ -1833,6 +1856,10 @@ body.lightbox-open {
   align-self: flex-start;
   padding: 8px 14px;
   border-radius: 999px;
+}
+
+.product-drawer-actions + .product-drawer-copy {
+  margin-top: 16px;
 }
 
 body.drawer-open {
