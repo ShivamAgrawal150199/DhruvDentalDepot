@@ -524,14 +524,36 @@
     "title": "SF-11S",
     "category": "Diamond Burs",
     "image": "images/SF11S.jpeg",
-    "note": "Diamond bur"
+    "note": "Diamond bur",
+    "detailsIntro": "The SF-11S Diamond Bur is commonly a slender flame/needle-shaped diamond bur used for fine finishing and precise contouring in dentistry. Its exact shape can vary slightly by brand, but “SF” burs are generally designed for delicate detailed work.",
+    "details": [
+      "Finishing crown margins",
+      "Interproximal reduction (IPR) in orthodontics.",
+      "Fine contouring of composite restorations.",
+      "Accessing narrow areas between teeth.",
+      "Ceramic/porcelain adjustment.",
+      "Beveling enamel margins.",
+      "Refining occlusal anatomy.",
+      "Smoothing sharp edges after preparation."
+    ]
   },
   {
     "id": "prd-73",
     "title": "SF-13C",
     "category": "Diamond Burs",
     "image": "images/SF13C.jpeg",
-    "note": "Diamond bur"
+    "note": "Diamond bur",
+    "detailsIntro": "The SF-13C diamond bur is generally a flame/tapered fine-cut diamond bur used for precision finishing and contouring procedures in restorative and prosthetic dentistry.",
+    "details": [
+      "Finishing crown and bridge preparations",
+      "Chamfer margin refinement",
+      "Interproximal contouring",
+      "Composite finishing and shaping",
+      "Porcelain/ceramic adjustment",
+      "Enamel beveling",
+      "Refining veneer preparations",
+      "Accessing narrow cervical areas"
+    ]
   },
    {
     "id": "prd-74",
