@@ -560,14 +560,34 @@
     "title": "SF-41C",
     "category": "Diamond Burs",
     "image": "images/SF41C.jpeg",
-    "note": "Diamond bur"
+    "note": "Diamond bur",
+    "detailsIntro": "SF 41C Diamond Bur is commonly used for tooth preparation and contouring procedures in restorative dentistry. The “SF” series generally refers to a Straight Flat-End shape, while “C” usually indicates a coarse grit. Because of its shape and grit, SF 41C is mainly used for:",
+    "details": [
+      "Rapid tooth structure reduction",
+      "Crown preparation",
+      "Flattening and shaping tooth surfaces",
+      "Creating parallel walls during crown/tooth prep",
+      "Adjusting restorative materials like composites or ceramics",
+      "Efficient cutting in operative procedures",
+      "Since it is a coarse grit bur, it cuts faster and is preferred during the initial reduction stage rather than final finishing or polishing."
+    ]
   },
   {
     "id": "prd-75",
     "title": "TR-12S",
     "category": "Diamond Burs",
     "image": "images/TR12S.jpeg",
-    "note": "Diamond bur"
+    "note": "Diamond bur",
+    "detailsIntro": "TR 12S Diamond Bur is generally a Tapered Round-End diamond bur used for precise tooth preparation and finishing procedures in restorative dentistry.The “TR” shape provides controlled tapering, while “S” usually indicates a superfine grit, making it suitable for smooth finishing rather than aggressive cutting.",
+    "details": [
+      "Fine finishing of crown preparations.",
+      "Smoothing margins and axial walls.",
+      "Refining ceramic or composite restorations.",
+      "Final contouring before impression procedures.",
+      "Creating smooth and accurate tooth surfaces.",
+      "Finishing chamfer or shoulder margins gently.",
+      "Because it is a superfine grit bur, it helps achieve a smoother surface finish, reducing scratches and improving restoration fit and aesthetics."
+    ]
   },
   {
     "id": "prd-76",
