@@ -594,7 +594,17 @@
     "title": "TF-12S",
     "category": "Diamond Burs",
     "image": "images/TF12S.jpeg",
-    "note": "Diamond bur"
+    "note": "Diamond bur",
+    "detailsIntro": "TF 12S Diamond Bur is commonly a Tapered Flat-End diamond bur used in restorative and prosthodontic procedures for precise tooth preparation and finishing.The “TF” design helps create defined preparation walls and flat margins, while “S” generally indicates a superfine grit for smooth finishing work.",
+    "details": [
+     "Finishing crown and bridge preparations.",
+     "Refining shoulder or chamfer margins.",
+     "Smoothing axial walls of tooth preparations.",
+     "Final contouring of composite and ceramic restorations.",
+     "Improving surface smoothness before impressions or cementation.",
+     "Precision finishing in prosthetic procedures.",
+     "Because it is a superfine grit bur, TF 12S is mainly used during the final finishing stage to achieve smooth, accurate, and restoration-friendly tooth surfaces."
+    ]
   },
   {
     "id": "prd-77",
