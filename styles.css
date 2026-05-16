@@ -1532,6 +1532,10 @@ footer {
     font-size: 0.95rem;
   }
 
+  body[data-category] .hero-inner h1 {
+    font-size: clamp(1.8rem, 7.2vw, 2.4rem);
+  }
+
   body[data-category]:not([data-category="All"]) .toolbar h2 {
     font-size: 1.75rem;
   }
