@@ -365,7 +365,7 @@ body.event-modal-open {
 
 .hero-inner h1 {
   font-family: "Work Sans", system-ui, sans-serif;
-  font-size: clamp(2.4rem, 4vw, 4rem);
+  font-size: clamp(2.1rem, 3.5vw, 3.4rem);
   margin: 12px 0 8px;
 }
 
@@ -498,7 +498,16 @@ main {
 
 .toolbar h2 {
   font-family: "Work Sans", system-ui, sans-serif;
-  font-size: 2rem;
+  /* font-size: 1.75rem; */
+  margin: 0;
+}
+
+body[data-category="All"] .hero {
+  padding-bottom: 8px;
+}
+
+body[data-category="All"] .toolbar {
+  margin-top: 0;
 }
 
 body[data-category]:not([data-category="All"]) .toolbar {
@@ -511,6 +520,18 @@ body[data-category]:not([data-category="All"]) .toolbar h2 {
 
 body[data-category]:not([data-category="All"]) .toolbar h2 {
   display: none;
+}
+
+body:not([data-category]) .hero {
+  padding-bottom: 24px;
+}
+
+body:not([data-category]) .toolbar {
+  margin-top: 0;
+}
+
+body:not([data-category]) .category-grid {
+  margin-top: 0;
 }
 
 .filters {
@@ -1533,7 +1554,12 @@ footer {
   }
 
   body[data-category] .hero-inner h1 {
-    font-size: clamp(1.8rem, 7.2vw, 2.4rem);
+    font-size: clamp(1.65rem, 6.4vw, 2.15rem);
+  }
+
+  body[data-category="All"] .hero-inner h1 {
+    font-size: clamp(1.45rem, 6vw, 1.75rem);
+    white-space: nowrap;
   }
 
   body[data-category]:not([data-category="All"]) .toolbar h2 {
@@ -2247,4 +2273,11 @@ body.dark-theme .toast--success {
 body.dark-theme .toast--error {
   background: #f8dada;
   color: #1a1d1f;
+}
+
+@media (max-width: 390px) {
+  body:not([data-category]) .hero-inner h1 {
+    font-size: clamp(1.68rem, 8.6vw, 1.96rem);
+    white-space: nowrap;
+  }
 }
