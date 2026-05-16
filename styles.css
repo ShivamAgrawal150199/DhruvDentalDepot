@@ -47,6 +47,19 @@ body.dark-theme {
   --primary-text: #1a1d1f;
 }
 
+body.events-page {
+  display: flex;
+  flex-direction: column;
+}
+
+body.events-page main {
+  flex: 1;
+}
+
+body.events-page footer {
+  margin-top: auto;
+}
+
 .noise {
   position: fixed;
   inset: 0;
