@@ -837,7 +837,6 @@ async function bootstrap() {
   await window.App?.products?.loadInventory?.();
 
   window.App?.products?.renderFilters?.();
-  window.App?.products?.setupBreadcrumbs?.();
   window.App?.products?.renderCards?.(document.body?.dataset?.category || "All");
 
   const session = await window.App?.auth?.refreshSessionFromServer?.();

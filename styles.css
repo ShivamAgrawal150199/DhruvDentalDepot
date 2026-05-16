@@ -501,6 +501,14 @@ main {
   font-size: 2rem;
 }
 
+body[data-category]:not([data-category="All"]) .toolbar {
+  margin-top: 0;
+}
+
+body[data-category]:not([data-category="All"]) .toolbar h2 {
+  margin-top: 0;
+}
+
 .filters {
   display: flex;
   flex-wrap: wrap;
