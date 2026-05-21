@@ -535,15 +535,15 @@ body[data-category]:not([data-category="All"]) .toolbar h2 {
   display: none;
 }
 
-body:not([data-category]) .hero {
+body.home-page .hero {
   padding-bottom: 24px;
 }
 
-body:not([data-category]) .toolbar {
+body.home-page .toolbar {
   margin-top: 0;
 }
 
-body:not([data-category]) .category-grid {
+body.home-page .category-grid {
   margin-top: 0;
 }
 
@@ -1689,6 +1689,16 @@ footer {
 
   .sticky-contact-bar {
     display: flex;
+    left: max(10px, env(safe-area-inset-left));
+    right: max(10px, env(safe-area-inset-right));
+    bottom: calc(10px + env(safe-area-inset-bottom));
+    gap: 8px;
+  }
+
+  .sticky-contact-item {
+    min-width: 0;
+    padding: 0 10px;
+    font-size: 1rem;
   }
 
   .toast-stack {
@@ -1696,7 +1706,7 @@ footer {
   }
 
   body {
-    padding-bottom: 70px;
+    padding-bottom: calc(70px + env(safe-area-inset-bottom));
   }
 }
 
@@ -2289,7 +2299,7 @@ body.dark-theme .toast--error {
 }
 
 @media (max-width: 390px) {
-  body:not([data-category]) .hero-inner h1 {
+  body.home-page .hero-inner h1 {
     font-size: clamp(1.68rem, 8.6vw, 1.96rem);
     white-space: nowrap;
   }
