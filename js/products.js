@@ -180,29 +180,60 @@ products.renderCards = function renderCards(category) {
 
     const fitClass = item.fit ? `fit-${item.fit}` : "";
     const noteHtml = item.note ? `<p>${item.note}</p>` : "";
-    card.innerHTML = `
-      <div class="card-media">
-        <img src="${item.image}" alt="${item.title}" class="${fitClass}" />
-        <div class="image-fallback">Image unavailable</div>
-      </div>
-      <div class="card-body">
-        <h4>${item.title}</h4>
-        ${noteHtml}
-        <div class="card-actions">
-          <button class="ghost details-btn" data-details-id="${item.id}" type="button">
-            <span class="action-text">View Details</span>
-            <img class="action-icon" src="images/viewdetails.png" alt="View details" />
-          </button>
-          <button class="primary add-cart-btn" data-id="${item.id}" type="button">Add to Cart</button>
-          <a class="ghost quick-inquiry-btn" href="${products.getQuickInquiryUrl(item)}" target="_blank" rel="noopener noreferrer">
-            <span class="action-text">Quick Inquiry</span>
-            <img class="action-icon" src="images/inquiry.png" alt="Quick inquiry" />
-          </a>
+    // Render slightly different markup for phone view: remove the two icons
+    const isPhone = window.matchMedia && window.matchMedia("(max-width: 680px)").matches;
+    if (isPhone) {
+      card.innerHTML = `
+        <div class="card-media">
+          <img src="${item.image}" alt="${item.title}" class="${fitClass}" />
+          <div class="image-fallback">Image unavailable</div>
         </div>
-      </div>
-    `;
+        <div class="card-body">
+          <h4>${item.title}</h4>
+          ${noteHtml}
+          <div class="card-actions">
+            <button class="primary add-cart-btn" data-id="${item.id}" type="button">Add to Cart</button>
+          </div>
+        </div>
+      `;
+    } else {
+      card.innerHTML = `
+        <div class="card-media">
+          <img src="${item.image}" alt="${item.title}" class="${fitClass}" />
+          <div class="image-fallback">Image unavailable</div>
+        </div>
+        <div class="card-body">
+          <h4>${item.title}</h4>
+          ${noteHtml}
+          <div class="card-actions">
+            <button class="ghost details-btn" data-details-id="${item.id}" type="button">
+              <span class="action-text">View Details</span>
+              <img class="action-icon" src="images/viewdetails.png" alt="View details" />
+            </button>
+            <button class="primary add-cart-btn" data-id="${item.id}" type="button">Add to Cart</button>
+            <a class="ghost quick-inquiry-btn" href="${products.getQuickInquiryUrl(item)}" target="_blank" rel="noopener noreferrer">
+              <span class="action-text">Quick Inquiry</span>
+              <img class="action-icon" src="images/inquiry.png" alt="Quick inquiry" />
+            </a>
+          </div>
+        </div>
+      `;
+    }
 
     grid.appendChild(card);
+
+    // On phone: make the whole card open the product drawer when tapped
+    if (isPhone) {
+      card.addEventListener("click", (ev) => {
+        const target = ev.target;
+        if (!(target instanceof HTMLElement)) return;
+        // If tapping the Add to Cart button, allow its handler to run instead
+        if (target.closest(".add-cart-btn")) return;
+        // If tapping the product image, prefer the image lightbox behavior
+        if (target.closest(".card-media img")) return;
+        products.openProductDrawer(item.id);
+      });
+    }
   });
 
   window.App?.ui?.bindImageFallbacks(grid);

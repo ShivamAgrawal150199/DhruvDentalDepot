@@ -1893,7 +1893,7 @@ body.lightbox-open {
   position: relative;
   background: var(--cream);
   border-radius: 14px;
-  min-height: 240px;
+    min-height: 240px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1998,6 +1998,7 @@ body.drawer-open {
   inset: 0;
   display: none;
   align-items: flex-start;
+
   justify-content: flex-start;
   z-index: 90;
 }
