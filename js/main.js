@@ -700,6 +700,13 @@ function setupCartInteractions() {
       }
       const image = target.closest(".card-media img");
       if (image instanceof HTMLImageElement) {
+        if (isPhoneViewport()) {
+          const card = image.closest(".card");
+          const productId = card?.querySelector(".add-cart-btn")?.getAttribute("data-id");
+          if (productId) products?.openProductDrawer?.(productId);
+          event.stopPropagation();
+          return;
+        }
         openImageLightbox(image.currentSrc || image.src, image.alt);
         return;
       }

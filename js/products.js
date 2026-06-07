@@ -229,8 +229,6 @@ products.renderCards = function renderCards(category) {
         if (!(target instanceof HTMLElement)) return;
         // If tapping the Add to Cart button, allow its handler to run instead
         if (target.closest(".add-cart-btn")) return;
-        // If tapping the product image, prefer the image lightbox behavior
-        if (target.closest(".card-media img")) return;
         products.openProductDrawer(item.id);
       });
     }
