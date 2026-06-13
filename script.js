@@ -970,9 +970,8 @@ function setupMobileNavMenu() {
     toggle.type = "button";
     toggle.className = "nav-toggle";
     toggle.setAttribute("aria-expanded", "false");
-    toggle.setAttribute("aria-label", "Open navigation menu");
+    toggle.setAttribute("aria-label", "Toggle navigation menu");
     toggle.innerHTML = `
-      <span class="nav-toggle-line"></span>
       <span class="nav-toggle-line"></span>
       <span class="nav-toggle-line"></span>
       <span class="nav-toggle-line"></span>
@@ -980,16 +979,9 @@ function setupMobileNavMenu() {
     topNav.insertBefore(toggle, navLinks);
   }
 
-  const closeMenu = () => {
-    topNav.classList.remove("menu-open");
-    toggle.setAttribute("aria-expanded", "false");
-    toggle.setAttribute("aria-label", "Open navigation menu");
-  };
-
   toggle.addEventListener("click", () => {
     const open = topNav.classList.toggle("menu-open");
     toggle.setAttribute("aria-expanded", String(open));
-    toggle.setAttribute("aria-label", open ? "Close navigation menu" : "Open navigation menu");
   });
 
   navLinks.addEventListener("click", (event) => {
@@ -997,15 +989,8 @@ function setupMobileNavMenu() {
     if (!(target instanceof HTMLElement)) return;
     if (!target.closest("a, [data-theme-toggle]")) return;
     if (!topNav.classList.contains("menu-open")) return;
-    closeMenu();
-  });
-
-  document.addEventListener("click", (event) => {
-    const target = event.target;
-    if (!(target instanceof Node)) return;
-    if (!topNav.classList.contains("menu-open")) return;
-    if (navLinks.contains(target) || toggle.contains(target)) return;
-    closeMenu();
+    topNav.classList.remove("menu-open");
+    toggle.setAttribute("aria-expanded", "false");
   });
 }
 
