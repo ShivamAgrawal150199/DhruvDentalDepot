@@ -979,6 +979,11 @@ function setupMobileNavMenu() {
     topNav.insertBefore(toggle, navLinks);
   }
 
+  const closeMenu = () => {
+    topNav.classList.remove("menu-open");
+    toggle.setAttribute("aria-expanded", "false");
+  };
+
   toggle.addEventListener("click", () => {
     const open = topNav.classList.toggle("menu-open");
     toggle.setAttribute("aria-expanded", String(open));
@@ -989,8 +994,15 @@ function setupMobileNavMenu() {
     if (!(target instanceof HTMLElement)) return;
     if (!target.closest("a, [data-theme-toggle]")) return;
     if (!topNav.classList.contains("menu-open")) return;
-    topNav.classList.remove("menu-open");
-    toggle.setAttribute("aria-expanded", "false");
+    closeMenu();
+  });
+
+  document.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof Node)) return;
+    if (!topNav.classList.contains("menu-open")) return;
+    if (navLinks.contains(target) || toggle.contains(target)) return;
+    closeMenu();
   });
 }
 
