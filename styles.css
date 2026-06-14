@@ -515,7 +515,7 @@ main {
 
 .toolbar h2 {
   font-family: "Work Sans", system-ui, sans-serif;
-  /* font-size: 1.75rem; */
+  font-size: 1.5rem;
   margin: 0;
 }
 
@@ -1674,8 +1674,12 @@ footer {
   }
 
   body[data-category]:not([data-category="All"]) .cta-row .ghost {
-    padding: 9px 14px;
-    font-size: 0.95rem;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+
+  .hero {
+    gap: 12px;
   }
 
   body[data-category] .hero-inner h1 {
@@ -1689,6 +1693,10 @@ footer {
 
   body[data-category]:not([data-category="All"]) .toolbar h2 {
     font-size: 1.75rem;
+  }
+
+  .toolbar h2 {
+    font-size: 1.25rem;
   }
 
   body[data-category]:not([data-category="All"]) .hero {
