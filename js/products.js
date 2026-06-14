@@ -179,7 +179,7 @@ products.renderCards = function renderCards(category) {
     card.style.animationDelay = `${index * 0.04}s`;
 
     const fitClass = item.fit ? `fit-${item.fit}` : "";
-    const noteHtml = item.note ? `<p>${item.note}</p>` : "";
+    const noteHtml = item.note && pageCategory !== "Diamond Burs" ? `<p>${item.note}</p>` : "";
     // Render slightly different markup for phone view: remove the two icons
     const isPhone = window.matchMedia && window.matchMedia("(max-width: 680px)").matches;
     if (isPhone) {
