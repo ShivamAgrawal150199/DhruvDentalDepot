@@ -1710,6 +1710,16 @@ footer {
 
   .hero-card {
     order: 2;
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .stat {
+    gap: 8px;
+  }
+
+  .stat span {
+    font-size: 1.5rem;
   }
 
   .category-grid {
