@@ -1683,7 +1683,7 @@ footer {
   }
 
   body[data-category] .hero-inner h1 {
-    font-size: clamp(1.65rem, 6.4vw, 2.15rem);
+    font-size: clamp(1.5rem, 6.4vw, 2.15rem);
   }
 
   body[data-category="All"] .hero-inner h1 {
