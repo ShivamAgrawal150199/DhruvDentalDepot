@@ -2196,6 +2196,36 @@ body.drawer-open {
   overflow: hidden;
 }
 
+html:has(body.drawer-open),
+html:has(body.user-drawer-open),
+html:has(body.modal-open),
+html:has(body.lightbox-open),
+html:has(body.event-modal-open),
+body.drawer-open,
+body.user-drawer-open,
+body.modal-open,
+body.lightbox-open,
+body.event-modal-open {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body.drawer-open,
+body.user-drawer-open,
+body.modal-open,
+body.lightbox-open,
+body.event-modal-open {
+  touch-action: none;
+}
+
+.product-drawer-panel,
+.user-drawer-panel,
+.wishlist-panel,
+.image-lightbox,
+.event-modal {
+  touch-action: auto;
+}
+
 .user-drawer {
   position: fixed;
   inset: 0;
