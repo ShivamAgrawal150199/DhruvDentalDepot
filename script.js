@@ -1480,7 +1480,7 @@ function renderCards(category) {
     card.style.animationDelay = `${index * 0.04}s`;
 
     const fitClass = item.fit === "contain" ? "fit-contain" : "";
-    const noteHtml = item.note ? `<p>${item.note}</p>` : "";
+    const noteHtml = item.note && pageCategory !== "Diamond Burs" ? `<p>${item.note}</p>` : "";
     card.innerHTML = `
       <div class="card-media">
         <img src="${item.image}" alt="${item.title}" class="${fitClass}" />

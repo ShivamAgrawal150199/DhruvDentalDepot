@@ -58,6 +58,10 @@ products.getCategoryPageHref = function getCategoryPageHref(category) {
   return CATEGORY_PAGE_MAP[category] || "#";
 };
 
+products.getProductPageHref = function getProductPageHref(productId) {
+  return `product-details.html?id=${encodeURIComponent(productId)}`;
+};
+
 products.setGridState = function setGridState(kind, message) {
   if (!grid) return;
   const spinner = kind === "loading" ? `<span class="state-spinner" aria-hidden="true"></span>` : "";
@@ -176,6 +180,7 @@ products.renderCards = function renderCards(category) {
   data.forEach((item, index) => {
     const card = document.createElement("article");
     card.className = `card${item.fit ? ` card-fit-${item.fit}` : ""}`;
+    card.setAttribute("data-product-card", item.id);
     card.style.animationDelay = `${index * 0.04}s`;
 
     const fitClass = item.fit ? `fit-${item.fit}` : "";
@@ -222,14 +227,14 @@ products.renderCards = function renderCards(category) {
 
     grid.appendChild(card);
 
-    // On phone: make the whole card open the product drawer when tapped
+    // On phone: make the whole card open the product details page when tapped.
     if (isPhone) {
       card.addEventListener("click", (ev) => {
         const target = ev.target;
         if (!(target instanceof HTMLElement)) return;
         // If tapping the Add to Cart button, allow its handler to run instead
         if (target.closest(".add-cart-btn")) return;
-        products.openProductDrawer(item.id);
+        window.location.href = products.getProductPageHref(item.id);
       });
     }
   });
@@ -529,6 +534,88 @@ products.openProductDrawer = function openProductDrawer(productId) {
   drawer.classList.add("open");
   drawer.setAttribute("aria-hidden", "false");
   document.body.classList.add("drawer-open");
+};
+
+products.renderProductDetailPage = function renderProductDetailPage() {
+  const root = document.getElementById("productDetail");
+  if (!(root instanceof HTMLElement)) return false;
+
+  const params = new URLSearchParams(window.location.search);
+  const productId = params.get("id") || "";
+  const product = productMap.get(productId);
+
+  if (!product) {
+    root.innerHTML = `
+      <div class="empty state-empty">
+        <span class="state-message">Product details unavailable.</span>
+        <a class="ghost" href="index.html">Browse Categories</a>
+      </div>
+    `;
+    return true;
+  }
+
+  document.title = `${product.title} | Dhruv Dental Depot`;
+
+  const fitClass = product.fit ? `fit-${product.fit}` : "";
+  const noteHtml = product.note ? `<p class="product-drawer-note">${product.note}</p>` : "";
+  const detailsIntro = String(product.detailsIntro || "").trim();
+  const detailsItems = Array.isArray(product.details)
+    ? product.details.map((item) => String(item || "").trim()).filter(Boolean)
+    : [];
+  const detailsIntroHtml = detailsIntro ? `<p class="product-drawer-copy">${detailsIntro}</p>` : "";
+  const detailsListHtml = detailsItems.length
+    ? `
+      <div class="product-drawer-details">
+        <h4>Common Uses</h4>
+        <ul>
+          ${detailsItems.map((item) => `<li>${item}</li>`).join("")}
+        </ul>
+      </div>
+    `
+    : "";
+  const wishlisted = products.isWishlisted(productId);
+  const wishlistLabel = wishlisted ? "Wishlisted" : "Add to Wishlist";
+  const wishlistState = wishlisted ? " active" : "";
+  const backHref = products.getCategoryPageHref(product.category) || "index.html";
+
+  root.innerHTML = `
+    <div class="product-detail-back">
+      <a class="ghost small" href="${backHref}">Back to Products</a>
+    </div>
+    <section class="product-detail-shell">
+      <div class="product-drawer-media product-detail-media">
+        <img src="${product.image}" alt="${product.title}" class="${fitClass}" />
+        <div class="image-fallback">Image unavailable</div>
+      </div>
+      <div class="product-drawer-info product-detail-info">
+        ${window.App?.ui?.getBreadcrumbHtml?.(
+          [
+            { label: "Home", href: "index.html" },
+            { label: product.category, href: products.getCategoryPageHref(product.category) },
+            { label: product.title }
+          ],
+          "breadcrumb-inline"
+        ) || ""}
+        <span class="tag">${product.category}</span>
+        <h1>${product.title}</h1>
+        ${noteHtml}
+        <p class="product-drawer-copy">For pricing, stock status, and compatibility details, contact us directly.</p>
+        <div class="product-drawer-actions product-detail-actions">
+          <button class="primary add-cart-btn" data-id="${product.id}" type="button">Add to Cart</button>
+          <a class="primary" href="${products.getQuickInquiryUrl(product)}" target="_blank" rel="noopener noreferrer">Quick Inquiry</a>
+          <button class="ghost wishlist-btn${wishlistState}" data-wishlist-id="${productId}" type="button">
+            <span class="wishlist-icon" aria-hidden="true">&#9825;</span>
+            <span class="wishlist-text">${wishlistLabel}</span>
+          </button>
+        </div>
+        ${detailsIntroHtml}
+        ${detailsListHtml}
+      </div>
+    </section>
+  `;
+
+  window.App?.ui?.bindImageFallbacks?.(root);
+  return true;
 };
 
 products.closeProductDrawer = function closeProductDrawer() {

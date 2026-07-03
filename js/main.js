@@ -695,33 +695,70 @@ function setupCartInteractions() {
       const detailsBtn = target.closest(".details-btn");
       if (detailsBtn instanceof HTMLElement) {
         const detailsId = detailsBtn.getAttribute("data-details-id");
-        if (detailsId) products?.openProductDrawer?.(detailsId);
-        return;
-      }
-      const image = target.closest(".card-media img");
-      if (image instanceof HTMLImageElement) {
-        if (isPhoneViewport()) {
-          const card = image.closest(".card");
-          const productId = card?.querySelector(".add-cart-btn")?.getAttribute("data-id");
-          if (productId) products?.openProductDrawer?.(productId);
-          event.stopPropagation();
-          return;
-        }
-        openImageLightbox(image.currentSrc || image.src, image.alt);
+        if (detailsId) window.location.href = products?.getProductPageHref?.(detailsId) || `product-details.html?id=${encodeURIComponent(detailsId)}`;
         return;
       }
       const btn = target.closest(".add-cart-btn");
-      if (!btn) return;
+      if (btn instanceof HTMLElement) {
+        const productId = btn.getAttribute("data-id");
+        if (!productId) return;
 
-      const productId = btn.getAttribute("data-id");
-      if (!productId) return;
+        cart?.addToCart?.(productId);
+        const original = btn.textContent;
+        btn.textContent = "Added";
+        setTimeout(() => {
+          btn.textContent = original || "Add to Cart";
+        }, 700);
+        return;
+      }
+      if (target.closest("a, button")) return;
+      const image = target.closest(".card-media img");
+      if (image instanceof HTMLImageElement) {
+        const card = image.closest(".card");
+        const productId = card?.querySelector(".add-cart-btn")?.getAttribute("data-id");
+        if (productId) window.location.href = products?.getProductPageHref?.(productId) || `product-details.html?id=${encodeURIComponent(productId)}`;
+        return;
+      }
+      const cardEl = target.closest("[data-product-card]");
+      const productId = cardEl instanceof HTMLElement ? cardEl.getAttribute("data-product-card") : "";
+      if (productId) window.location.href = products?.getProductPageHref?.(productId) || `product-details.html?id=${encodeURIComponent(productId)}`;
+    });
+  }
 
-      cart?.addToCart?.(productId);
-      const original = btn.textContent;
-      btn.textContent = "Added";
-      setTimeout(() => {
-        btn.textContent = original || "Add to Cart";
-      }, 700);
+  const productDetail = document.getElementById("productDetail");
+  if (productDetail instanceof HTMLElement) {
+    productDetail.addEventListener("click", async (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      const btn = target.closest(".add-cart-btn");
+      if (btn instanceof HTMLElement) {
+        const productId = btn.getAttribute("data-id");
+        if (!productId) return;
+        cart?.addToCart?.(productId);
+        const original = btn.textContent;
+        btn.textContent = "Added";
+        setTimeout(() => {
+          btn.textContent = original || "Add to Cart";
+        }, 700);
+        return;
+      }
+
+      const wishlistBtn = target.closest(".wishlist-btn");
+      if (!(wishlistBtn instanceof HTMLElement)) return;
+      event.preventDefault();
+      event.stopPropagation();
+      const id = wishlistBtn.getAttribute("data-wishlist-id");
+      if (!id) return;
+      const session = window.App?.auth?.getSession?.();
+      if (!session) {
+        products?.setPendingWishlist?.(id);
+        window.location.href = window.App?.auth?.getLoginUrl?.() || "login.html";
+        return;
+      }
+      const nowWishlisted = await products?.toggleWishlist?.(id);
+      const textEl = wishlistBtn.querySelector(".wishlist-text");
+      if (textEl) textEl.textContent = nowWishlisted ? "Wishlisted" : "Add to Wishlist";
+      wishlistBtn.classList.toggle("active", nowWishlisted);
     });
   }
 
@@ -800,8 +837,6 @@ function setupCartInteractions() {
       const textEl = wishlistBtn.querySelector(".wishlist-text");
       if (textEl) textEl.textContent = nowWishlisted ? "Wishlisted" : "Add to Wishlist";
       wishlistBtn.classList.toggle("active", nowWishlisted);
-      products?.setDrawerLock?.(500);
-      products?.openProductDrawer?.(id);
       return;
     }
 
@@ -843,13 +878,19 @@ async function bootstrap() {
   window.App?.products?.setGridState?.("loading", "Loading products...");
   await window.App?.products?.loadInventory?.();
 
+  const renderedProductDetail = window.App?.products?.renderProductDetailPage?.();
   window.App?.products?.renderFilters?.();
-  window.App?.products?.renderCards?.(document.body?.dataset?.category || "All");
+  if (!renderedProductDetail) {
+    window.App?.products?.renderCards?.(document.body?.dataset?.category || "All");
+  }
 
   const session = await window.App?.auth?.refreshSessionFromServer?.();
   if (session) {
     await window.App?.products?.loadWishlistFromServer?.();
     await window.App?.products?.applyPendingWishlist?.();
+  }
+  if (renderedProductDetail) {
+    window.App?.products?.renderProductDetailPage?.();
   }
   window.App?.products?.renderWishlistNav?.();
 

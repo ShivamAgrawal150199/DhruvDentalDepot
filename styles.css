@@ -443,6 +443,15 @@ body.event-modal-open {
   font-size: 0.85rem;
 }
 
+body[data-category]:not([data-category="All"]) .cta-row {
+  margin-top: 18px;
+}
+
+body[data-category]:not([data-category="All"]) .cta-row .ghost {
+  padding: 8px 13px;
+  font-size: 0.9rem;
+}
+
 .hero-card {
   background: var(--card);
   padding: 24px;
@@ -2075,6 +2084,112 @@ body.lightbox-open {
 
 .product-drawer-actions + .product-drawer-copy {
   margin-top: 16px;
+}
+
+.product-detail-main {
+  padding-top: 32px;
+}
+
+.product-detail-shell {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.9fr) minmax(280px, 1.1fr);
+  gap: clamp(24px, 5vw, 56px);
+  align-items: start;
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.product-detail-back {
+  max-width: 1120px;
+  margin: 0 auto 18px;
+}
+
+.product-detail-media {
+  min-height: 420px;
+}
+
+.product-detail-info {
+  padding: 8px 0 0;
+}
+
+.product-detail-info h1 {
+  font-family: "Work Sans", system-ui, sans-serif;
+  font-size: clamp(1.45rem, 3vw, 2.45rem);
+  line-height: 1.12;
+  margin: 10px 0 12px;
+}
+
+.product-detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.product-detail-actions .primary,
+.product-detail-actions .ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  min-width: 0;
+}
+
+.product-detail-actions .wishlist-btn {
+  margin-top: 0;
+  padding: 12px 18px;
+}
+
+@media (max-width: 780px) {
+  .product-detail-main {
+    padding-top: 20px;
+  }
+
+  .product-detail-shell {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .product-detail-media {
+    min-height: 300px;
+  }
+
+  .product-detail-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+
+  .product-detail-actions .primary,
+  .product-detail-actions .ghost {
+    flex: 1 1 calc(50% - 5px);
+    width: auto;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+
+  .product-detail-actions .wishlist-btn {
+    flex: 0 0 48px;
+    width: 48px;
+    min-width: 48px;
+    height: 48px;
+    min-height: 48px;
+    padding: 0;
+    border-radius: 999px;
+  }
+
+  .product-detail-actions .wishlist-btn .wishlist-icon {
+    margin-right: 0;
+  }
+
+  .product-detail-actions .wishlist-btn .wishlist-text {
+    display: none;
+  }
+
+  .product-detail-actions .add-cart-btn {
+    flex-basis: 100%;
+    width: 100%;
+  }
 }
 
 body.drawer-open {
