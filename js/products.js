@@ -577,6 +577,16 @@ products.renderProductDetailPage = function renderProductDetailPage() {
   const wishlistLabel = wishlisted ? "Wishlisted" : "Add to Wishlist";
   const wishlistState = wishlisted ? " active" : "";
   const backHref = products.getCategoryPageHref(product.category) || "index.html";
+  /*
+  const breadcrumbHtml = window.App?.ui?.getBreadcrumbHtml?.(
+    [
+      { label: "Home", href: "index.html" },
+      { label: product.category, href: products.getCategoryPageHref(product.category) },
+      { label: product.title }
+    ],
+    "breadcrumb-inline"
+  ) || "";
+  */
 
   root.innerHTML = `
     <div class="product-detail-back">
@@ -588,14 +598,6 @@ products.renderProductDetailPage = function renderProductDetailPage() {
         <div class="image-fallback">Image unavailable</div>
       </div>
       <div class="product-drawer-info product-detail-info">
-        ${window.App?.ui?.getBreadcrumbHtml?.(
-          [
-            { label: "Home", href: "index.html" },
-            { label: product.category, href: products.getCategoryPageHref(product.category) },
-            { label: product.title }
-          ],
-          "breadcrumb-inline"
-        ) || ""}
         <span class="tag">${product.category}</span>
         <h1>${product.title}</h1>
         ${noteHtml}

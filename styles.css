@@ -2114,7 +2114,7 @@ body.lightbox-open {
 
 .product-detail-info h1 {
   font-family: "Work Sans", system-ui, sans-serif;
-  font-size: clamp(1.45rem, 3vw, 2.45rem);
+  font-size: clamp(1.20rem, 3vw, 1.5rem);
   line-height: 1.12;
   margin: 10px 0 12px;
 }
