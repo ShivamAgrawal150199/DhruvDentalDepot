@@ -346,9 +346,11 @@ products.removeWishlistItem = async function removeWishlistItem(productId, { sil
 
 products.toggleWishlist = async function toggleWishlist(productId) {
   if (products.isWishlisted(productId)) {
-    return await products.removeWishlistItem(productId);
+    const removed = await products.removeWishlistItem(productId);
+    return removed ? false : products.isWishlisted(productId);
   }
-  return await products.addWishlistItem(productId);
+  const added = await products.addWishlistItem(productId);
+  return added ? true : products.isWishlisted(productId);
 };
 
 products.getWishlistModal = function getWishlistModal() {

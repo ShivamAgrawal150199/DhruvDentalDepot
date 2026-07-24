@@ -814,9 +814,11 @@ async function removeWishlistItem(productId, { silent = false } = {}) {
 
 async function toggleWishlist(productId) {
   if (isWishlisted(productId)) {
-    return await removeWishlistItem(productId);
+    const removed = await removeWishlistItem(productId);
+    return removed ? false : isWishlisted(productId);
   }
-  return await addWishlistItem(productId);
+  const added = await addWishlistItem(productId);
+  return added ? true : isWishlisted(productId);
 }
 
 function getWishlistModal() {
