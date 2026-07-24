@@ -176,6 +176,8 @@ ui.setupMobileNavMenu = function setupMobileNavMenu() {
   const topNav = document.querySelector(".top-nav");
   const navLinks = topNav?.querySelector(".nav-links");
   if (!topNav || !navLinks) return;
+  if (topNav.dataset.mobileNavBound === "true") return;
+  topNav.dataset.mobileNavBound = "true";
 
   let toggle = topNav.querySelector(".nav-toggle");
   if (!toggle) {

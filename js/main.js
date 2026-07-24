@@ -865,6 +865,9 @@ function setupCartInteractions() {
 
 async function bootstrap() {
   window.App?.ui?.applyTheme?.(window.App?.ui?.getStoredTheme?.());
+  window.App?.ui?.setupMobileNavMenu?.();
+  setupStickyContactBar();
+  renderAuthNav();
 
   if (window.App?.auth?.guardCheckoutPage?.()) return;
 
@@ -905,10 +908,8 @@ async function bootstrap() {
   window.App?.cart?.updateCartBadge?.();
   renderAuthNav();
   window.App?.ui?.setupThemeToggle?.();
-  window.App?.ui?.setupMobileNavMenu?.();
   setupScrollReveal();
   setupInstagramFollowButton();
-  setupStickyContactBar();
   setupPriceListForm();
   setupCartInteractions();
   setupEventsPage();
