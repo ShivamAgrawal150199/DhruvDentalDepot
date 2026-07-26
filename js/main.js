@@ -10,6 +10,7 @@ let imageLightbox = null;
 let userDrawer = null;
 let userDrawerAnchor = null;
 let eventModal = null;
+let cartInteractionsBound = false;
 
 const EVENTS_PAGE_HREF = "events.html";
 
@@ -685,6 +686,9 @@ async function setupAdminPage() {
 }
 
 function setupCartInteractions() {
+  if (cartInteractionsBound) return;
+  cartInteractionsBound = true;
+
   const grid = document.getElementById("grid");
   const products = window.App?.products;
   const cart = window.App?.cart;
@@ -868,6 +872,7 @@ async function bootstrap() {
   window.App?.ui?.setupMobileNavMenu?.();
   setupStickyContactBar();
   renderAuthNav();
+  setupCartInteractions();
 
   if (window.App?.auth?.guardCheckoutPage?.()) return;
 
