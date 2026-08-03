@@ -1,7 +1,7 @@
 [
   {
     "id": "prd-1",
-    "title": "Instrument 01",
+    "title": "M4 Carbon",
     "category": "Accessories",
     "image": "images/ChatGPT Image Feb 7, 2026, 06_06_40 PM.png",
     "note": ""
@@ -263,7 +263,7 @@
   },
   {
     "id": "prd-38",
-    "title": "Handpiece 2",
+    "title": "Aerotor",
     "category": "Dental Handpieces",
     "image": "images/handpiece2.jpg",
     "note": ""
@@ -612,5 +612,13 @@
     "category": "Diamond Burs",
     "image": "images/EX26S.jpeg",
     "note": "Diamond bur"
+  },
+  {
+    "id": "prd-78",
+    "title": "M4 Cord",
+    "category": "Dental Handpieces",
+    "image": "images/MicromotorCords.png",
+    "note": "",
+    "fit": "contain"
   }
 ]
