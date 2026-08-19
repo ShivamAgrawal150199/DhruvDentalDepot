@@ -8,28 +8,28 @@
   },
   {
     "id": "prd-2",
-    "title": "Instrument 02",
+    "title": "Contra Angle head",
     "category": "Accessories",
     "image": "images/ChatGPT Image Feb 7, 2026, 11_27_32 PM.png",
     "note": ""
   },
   {
     "id": "prd-3",
-    "title": "Instrument 03",
+    "title": "Endomotor cartirdge",
     "category": "Accessories",
     "image": "images/ChatGPT Image Feb 7, 2026, 11_38_07 PM.png",
     "note": ""
   },
   {
     "id": "prd-4",
-    "title": "Instrument 04",
+    "title": "Diamond disc",
     "category": "Accessories",
     "image": "images/ChatGPT Image Feb 8, 2026, 12_27_42 AM.png",
     "note": ""
   },
   {
     "id": "prd-5",
-    "title": "Instrument 05",
+    "title": "Paper Mandrel",
     "category": "Accessories",
     "image": "images/ChatGPT Image Feb 8, 2026, 12_37_07 AM.png",
     "note": "",
@@ -37,7 +37,7 @@
   },
   {
     "id": "prd-6",
-    "title": "Instrument 06",
+    "title": "Endomotor head",
     "category": "Accessories",
     "image": "images/ChatGPT Image Feb 8, 2026, 12_41_05 AM.png",
     "note": "",
@@ -45,7 +45,7 @@
   },
   {
     "id": "prd-7",
-    "title": "Mandrel",
+    "title": "Disc Mandrel",
     "category": "Accessories",
     "image": "images/ChatGPT Image Feb 8, 2026, 12_43_30 AM.png",
     "note": "",
@@ -60,35 +60,21 @@
   },
   {
     "id": "prd-9",
-    "title": "Instrument 08",
-    "category": "Accessories",
-    "image": "images/WhatsApp Image 2026-02-07 at 18.09.13.jpeg",
-    "note": ""
-  },
-  {
-    "id": "prd-10",
     "title": "Micromotor Cord",
     "category": "Accessories",
     "image": "images/MicromotorCord.jpeg",
     "note": ""
   },
   {
-    "id": "prd-11",
-    "title": "New 01",
-    "category": "Accessories",
-    "image": "images/new1.jpeg",
-    "note": ""
-  },
-  {
-    "id": "prd-12",
-    "title": "New 02",
+    "id": "prd-10",
+    "title": "Lightcure Probe",
     "category": "Accessories",
     "image": "images/new2.jpeg",
     "note": ""
   },
   {
     "id": "prd-13",
-    "title": "New 03",
+    "title": "Lightcure Probe",
     "category": "Accessories",
     "image": "images/new3.jpeg",
     "note": ""
@@ -483,7 +469,7 @@
   },
   {
     "id": "prd-69",
-    "title": "Bur Adopter",
+    "title": "Contra Bur Adopter",
     "category": "Accessories",
     "image": "images/BurAdopter.png",
     "note": ""
