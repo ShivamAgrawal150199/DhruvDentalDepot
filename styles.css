@@ -143,6 +143,17 @@ body.events-page footer {
   overflow: hidden;
 }
 
+.event-banner--notice {
+  max-width: 760px;
+  color: var(--ink);
+  text-decoration: none;
+  width: calc(100% - 24px);
+  font: inherit;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
 .event-banner:hover {
   transform: translateY(-3px) scale(1.01);
   box-shadow: 0 24px 50px rgba(255, 140, 66, 0.24), 0 24px 50px rgba(0, 167, 167, 0.18);
@@ -695,6 +706,11 @@ body.dark-theme .filter-btn {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+.event-card--upcoming {
+  border: 1px solid rgba(0, 167, 167, 0.22);
+  cursor: default;
+}
+
 .event-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 24px 46px rgba(26, 29, 31, 0.16);
@@ -924,6 +940,12 @@ body.dark-theme .card-media {
   background: var(--cream);
   padding: 4px 8px;
   border-radius: 999px;
+}
+
+.tag--upcoming {
+  background: rgba(0, 167, 167, 0.16);
+  color: #087b83;
+  font-weight: 700;
 }
 
 .empty {
