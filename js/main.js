@@ -331,7 +331,7 @@ function setupEventsPage() {
 function setupUpcomingEventNotice() {
   if (document.querySelector("[data-upcoming-event-notice]")) return;
 
-  const eventEnd = new Date("2026-09-14T00:00:00+05:30");
+  const eventEnd = new Date("2026-09-28T00:00:00+05:30");
   if (Date.now() >= eventEnd.getTime()) return;
 
   const topNav = document.querySelector(".top-nav");
@@ -341,16 +341,16 @@ function setupUpcomingEventNotice() {
   notice.type = "button";
   notice.className = "event-banner event-banner--notice";
   notice.setAttribute("data-upcoming-event-notice", "true");
-  notice.setAttribute("aria-label", "Upcoming event: Chandigarh Expodent on 12 and 13 September 2026");
+  notice.setAttribute("aria-label", "Upcoming event: Bengaluru Expodent from 25 to 27 September 2026");
   notice.innerHTML = `
     <span class="event-badge">Upcoming</span>
     <span class="event-banner-content">
-      <span class="event-banner-title">Chandigarh Expodent</span>
-      <span class="event-banner-copy">Visit us on 12-13 September 2026.</span>
+      <span class="event-banner-title">Bengaluru Expodent</span>
+      <span class="event-banner-copy">Visit us at Stall <strong>D18</strong> on 25-27 September 2026.</span>
     </span>
   `;
   notice.addEventListener("click", () => {
-    openEventModal("images/ChandigarhExpo.png", "Chandigarh Expodent");
+    openEventModal("images/BengaluruExpo.png", "Bengaluru Expodent");
   });
 
   topNav.insertAdjacentElement("afterend", notice);
