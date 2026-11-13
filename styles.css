@@ -64,6 +64,10 @@ body.events-page footer {
   margin-top: auto;
 }
 
+.events-page-highlight-title {
+  display: none;
+}
+
 .noise {
   position: fixed;
   inset: 0;
@@ -698,11 +702,15 @@ body.dark-theme .filter-btn {
 
 .event-card {
   background: var(--card);
+  color: var(--ink);
   border-radius: 18px;
   box-shadow: 0 20px 40px var(--shadow);
   overflow: hidden;
   display: grid;
   cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  text-decoration: none;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -1702,6 +1710,52 @@ footer {
   .cta-row {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  body.events-page .cta-row .ghost {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+
+  body.events-page .events-page-title {
+    display: none;
+  }
+
+  body.events-page .events-page-highlight-title {
+    display: block;
+    font-size: 1.5rem;
+    line-height: 1.15;
+    margin: 12px 0 8px;
+  }
+
+  body.events-page .hero-card {
+    display: none;
+  }
+
+  body.events-page .hero {
+    padding-bottom: 8px;
+  }
+
+  body.events-page .toolbar {
+    margin: 0 0 10px;
+  }
+
+  body.events-page .toolbar h2 {
+    display: none;
+  }
+
+  body.events-page .events-grid {
+    margin-top: 0;
+  }
+
+  body.events-page .event-title-row {
+    display: block;
+  }
+
+  body.events-page .event-date {
+    display: block;
+    margin-top: 4px;
+    text-align: left;
   }
 
   body[data-category]:not([data-category="All"]) .cta-row .ghost {

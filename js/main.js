@@ -315,16 +315,25 @@ function setupEventsPage() {
   const eventsList = document.querySelector("[data-events-list]");
   if (!(eventsList instanceof HTMLElement)) return;
 
-  eventsList.addEventListener("click", (event) => {
+  const openPoster = (event) => {
     const target = event.target;
-    if (!(target instanceof HTMLElement)) return;
+    if (!(target instanceof Element)) return;
     const trigger = target.closest("[data-event-poster]");
     if (!(trigger instanceof HTMLElement)) return;
-    event.preventDefault();
     const src = trigger.dataset.eventPosterSrc || "";
     const title = trigger.dataset.eventTitle || "Event poster";
     if (!src) return;
     openEventModal(src, title);
+  };
+
+  eventsList.addEventListener("click", (event) => {
+    event.preventDefault();
+    openPoster(event);
+  });
+  eventsList.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    openPoster(event);
   });
 }
 
@@ -898,6 +907,8 @@ function setupCartInteractions() {
 async function bootstrap() {
   window.App?.ui?.applyTheme?.(window.App?.ui?.getStoredTheme?.());
   window.App?.ui?.setupMobileNavMenu?.();
+  window.App?.ui?.setupThemeToggle?.();
+  setupEventsPage();
   setupStickyContactBar();
   setupUpcomingEventNotice();
   renderAuthNav();
@@ -941,12 +952,10 @@ async function bootstrap() {
   await setupAdminPage();
   window.App?.cart?.updateCartBadge?.();
   renderAuthNav();
-  window.App?.ui?.setupThemeToggle?.();
   setupScrollReveal();
   setupInstagramFollowButton();
   setupPriceListForm();
   setupCartInteractions();
-  setupEventsPage();
 }
 
 document.addEventListener("auth:login", async () => {

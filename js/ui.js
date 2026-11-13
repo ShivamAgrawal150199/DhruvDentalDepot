@@ -145,10 +145,11 @@ ui.applyTheme = function applyTheme(theme) {
 };
 
 ui.setupThemeToggle = function setupThemeToggle() {
+  const topNav = document.querySelector(".top-nav");
   const navLinks = document.querySelector(".nav-links");
-  if (!navLinks) return;
+  if (!topNav || !navLinks) return;
 
-  let button = navLinks.querySelector("[data-theme-toggle]");
+  let button = topNav.querySelector("[data-theme-toggle]");
   if (!button) {
     button = document.createElement("button");
     button.type = "button";
@@ -160,16 +161,22 @@ ui.setupThemeToggle = function setupThemeToggle() {
   const syncLabel = () => {
     const isDark = document.body.classList.contains("dark-theme");
     button.textContent = isDark ? "Light Mode" : "Dark Mode";
+    button.setAttribute("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode");
   };
 
+  if (button.parentElement !== navLinks) navLinks.appendChild(button);
   syncLabel();
 
-  button.addEventListener("click", () => {
-    const nextTheme = document.body.classList.contains("dark-theme") ? "light" : "dark";
-    localStorage.setItem("ddd_theme", nextTheme);
-    ui.applyTheme(nextTheme);
-    syncLabel();
-  });
+  if (button.dataset.themeBound !== "true") {
+    button.dataset.themeBound = "true";
+    button.addEventListener("click", () => {
+      const nextTheme = document.body.classList.contains("dark-theme") ? "light" : "dark";
+      localStorage.setItem("ddd_theme", nextTheme);
+      ui.applyTheme(nextTheme);
+      syncLabel();
+    });
+  }
+
 };
 
 ui.setupMobileNavMenu = function setupMobileNavMenu() {
